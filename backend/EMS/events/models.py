@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import AppUser
+from django.utils import timezone
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
@@ -17,11 +18,6 @@ class Event(models.Model):
         return self.title
 
 class Registration(models.Model):
-    class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        APPROVED = "approved", "Approved"
-        REJECTED = "rejected", "Rejected"
-
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
@@ -32,7 +28,7 @@ class Registration(models.Model):
         on_delete=models.CASCADE,
         related_name="event_registrations"
     )
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.participant.name} -> {self.event.title} [{self.status}]"
+        return f"{self.participant.name} -> {self.event.title}"
