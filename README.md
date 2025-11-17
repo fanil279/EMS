@@ -10,7 +10,6 @@
     "name": "John Doe",
     "email": "john@example.com",
     "password": "securePassword123",
-    "role": "participant"
 }
 ```
 
@@ -44,7 +43,6 @@
         "id": 2,
         "name": "John Doe",
         "email": "john@example.com",
-        "role": "participant"
     }
 }
 ```

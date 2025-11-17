@@ -21,17 +21,17 @@ class AppUserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", AppUser.Role.ADMIN)
         return self.create_user(email, password, **extra_fields)
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
         ADMIN = "admin", "Admin"
-        ORGANISER = "organiser", "Organiser"
-        PARTICIPANT = "participant", "Participant"
+        USER = "user", "User"
 
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=150)
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.PARTICIPANT)
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
     institution = models.ForeignKey(
         "Institution", on_delete=models.CASCADE, null=True, blank=True
     )
