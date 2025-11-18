@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
 class Institution(models.Model):
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True, null=True)

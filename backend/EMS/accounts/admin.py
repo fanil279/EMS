@@ -1,9 +1,7 @@
 from django.contrib import admin
 from .models import AppUser, Institution
 
-# -------------------------------
-# AppUser Admin
-# -------------------------------
+
 @admin.register(AppUser)
 class AppUserAdmin(admin.ModelAdmin):
     list_display = ("id", "email", "name", "role", "institution", "is_active", "is_staff")
@@ -26,9 +24,6 @@ class AppUserAdmin(admin.ModelAdmin):
         }),
     )
 
-# -------------------------------
-# Institution Admin
-# -------------------------------
 @admin.register(Institution)
 class InstitutionAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "address")

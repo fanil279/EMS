@@ -76,7 +76,6 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
             }
         }
 
-
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer
 

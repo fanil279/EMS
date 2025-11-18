@@ -18,20 +18,23 @@ class EventListCreateAPIView(generics.ListCreateAPIView):
 
     @swagger_auto_schema(
         operation_description="List all events (public)",
-        security=[],  # GET is public
+        security=[],
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Create a new event (authenticated)",
-        security=[{"Bearer": []}],  # POST requires authentication
+        security=[{"Bearer": []}],
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(organiser=self.request.user)
+        try:
+            serializer.save(participant=self.request.user)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
 
 
 class EventRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):

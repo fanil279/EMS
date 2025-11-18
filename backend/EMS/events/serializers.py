@@ -13,16 +13,22 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ["id", "title", "description", "location", "start_date", "end_date", "organiser"]
+        fields = [
+            "id", "title", "description", "location", 
+            "start_date", "end_date", "registration_deadline", "organiser"
+        ]
         read_only_fields = ["organiser"]
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     participant = UserSerializer(read_only=True)
     event = EventSerializer(read_only=True)
+    event_id = serializers.PrimaryKeyRelatedField(
+        queryset=Event.objects.all(), source='event', write_only=True
+    )
 
     class Meta:
         model = Registration
-        fields = ["id", "event", "participant", "created_at"]
+        fields = ["id", "event", "event_id", "participant", "created_at"]
         read_only_fields = ["participant", "created_at"]
         ref_name = "EventsRegistrationSerializer"
