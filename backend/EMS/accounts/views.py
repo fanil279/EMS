@@ -17,7 +17,7 @@ class RegistrationView(generics.CreateAPIView):
 
     @swagger_auto_schema(
         operation_description="Register a new user (public endpoint)",
-        security=[],  # public
+        security=[],
         responses={201: openapi.Response('User created successfully')}
     )
     def post(self, request, *args, **kwargs):
@@ -32,7 +32,7 @@ class LogoutView(generics.GenericAPIView):
 
     @swagger_auto_schema(
         operation_description="Logout user (requires authentication)",
-        security=[{"Bearer": []}],  # show lock in Swagger
+        security=[{"Bearer": []}],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             required=["refresh"],

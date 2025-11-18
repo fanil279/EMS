@@ -17,3 +17,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': event['message']
         }))
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        print(f"Received from client: {data}")
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "send_notification",
+                "message": f"Server received: {data.get('message')}"
+            }
+        )
