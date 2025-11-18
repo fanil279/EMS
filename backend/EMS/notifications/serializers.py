@@ -3,6 +3,7 @@ from .models import Notification
 from accounts.serializers import AppUserSerializer
 from events.serializers import EventSerializer
 
+
 class NotificationSerializer(serializers.ModelSerializer):
     user = AppUserSerializer(read_only=True)
     event = EventSerializer(read_only=True)
@@ -16,4 +17,4 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ["id", "user", "event", "message", "is_read", "user_id", "event_id"]
+        fields = ['__all__']

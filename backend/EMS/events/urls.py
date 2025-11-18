@@ -6,6 +6,7 @@ from .views import (
     RegistrationRetrieveAPIView,
 )
 
+
 urlpatterns = [
     # Events
     path("events/", EventListCreateAPIView.as_view(), name="event-list-create"),
