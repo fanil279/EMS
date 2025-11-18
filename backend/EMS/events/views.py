@@ -76,22 +76,24 @@ class RegistrationListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        operation_description="List all registrations (authenticated)",
-        security=[{"Bearer": []}],
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Create a new registration (authenticated)",
-        security=[{"Bearer": []}],
-    )
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def perform_create(self, serializer):
-        serializer.save(participant=self.request.user)
+        registration = serializer.save(participant=self.request.user)
+
+        channel_layer = get_channel_layer()
+
+        def notify_user(user_id, message):
+            async_to_sync(channel_layer.group_send)(
+                f"notifications_{user_id}",
+                {
+                    "type": "send_notification",
+                    "message": message,
+                }
+            )
+
+        notify_user(self.request.user.id, f"You registered for {registration.event.title}!")
+
+        notify_user(registration.event.organiser.id,
+                    f"{self.request.user.name} registered for your event: {registration.event.title}")
 
 
 class RegistrationRetrieveAPIView(generics.RetrieveAPIView):
