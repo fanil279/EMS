@@ -34,7 +34,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=150)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
     institution = models.ForeignKey(
-        "Institution", on_delete=models.CASCADE, null=True, blank=True
+        Institution, on_delete=models.SET_NULL, null=True, blank=True
     )
 
     is_active = models.BooleanField(default=True)
