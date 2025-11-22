@@ -4,6 +4,7 @@ from .views import (
     EventRetrieveUpdateDestroyAPIView,
     RegistrationListCreateAPIView,
     RegistrationRetrieveAPIView,
+    LatestSixEventsAPIView,
 )
 
 
@@ -11,6 +12,7 @@ urlpatterns = [
     # Events
     path("events/", EventListCreateAPIView.as_view(), name="event-list-create"),
     path("events/<int:pk>/", EventRetrieveUpdateDestroyAPIView.as_view(), name="event-detail"),
+    path("events/latest/", LatestSixEventsAPIView.as_view(), name="event-latest"),
 
     # Registrations
     path("registrations/", RegistrationListCreateAPIView.as_view(), name="registration-list-create"),

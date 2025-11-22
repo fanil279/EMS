@@ -37,6 +37,21 @@ class EventListCreateAPIView(generics.ListCreateAPIView):
             raise ValidationError({"detail": str(e)})
 
 
+class LatestSixEventsAPIView(generics.ListAPIView):
+    serializer_class = EventSerializer
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Get the latest 6 events (public)",
+        security=[],
+    )
+    def get(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Event.objects.order_by("-created_at")[:6]
+
+
 class EventRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
