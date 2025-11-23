@@ -23,8 +23,21 @@ class RegistrationView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "institutionName": user.institution.name if user.institution else None,
+                "institutionAddress": user.institution.address if user.institution else None,
+                "token": str(refresh.access_token),
+            },
+            "refresh": str(refresh)
+        }, status=status.HTTP_201_CREATED)
 
 
 class LogoutView(generics.GenericAPIView):
@@ -54,26 +67,27 @@ class LogoutView(generics.GenericAPIView):
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username_field = 'email'
+    username_field = "email"
 
     def validate(self, attrs):
-        credentials = {
-            "email": attrs.get("email"),
-            "password": attrs.get("password")
-        }
-        user = AppUser.objects.filter(email=credentials["email"]).first()
-        if user is None or not user.check_password(credentials["password"]):
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        user = authenticate(email=email, password=password)
+        if not user:
             raise serializers.ValidationError("Invalid email or password")
+
         refresh = RefreshToken.for_user(user)
         return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
             "user": {
                 "id": user.id,
                 "name": user.name,
                 "email": user.email,
-                "role": user.role
-            }
+                "institutionName": user.institution.name if user.institution else None,
+                "institutionAddress": user.institution.address if user.institution else None,
+                "token": str(refresh.access_token),
+            },
+            "refresh": str(refresh)
         }
 
 class EmailTokenObtainPairView(TokenObtainPairView):
