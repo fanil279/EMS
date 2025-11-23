@@ -27,7 +27,7 @@ class RegistrationView(generics.CreateAPIView):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({
+        response = Response({
             "user": {
                 "id": user.id,
                 "name": user.name,
@@ -39,30 +39,49 @@ class RegistrationView(generics.CreateAPIView):
             "refresh": str(refresh)
         }, status=status.HTTP_201_CREATED)
 
+        response.set_cookie(
+            key='access_token',
+            value=str(refresh.access_token),
+            httponly=True,
+            secure=False,
+            samesite='Strict',
+            max_age=3600
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=str(refresh),
+            httponly=True,
+            secure=False,
+            samesite='Strict',
+            max_age=86400 * 3
+        )
+        
+        return response
+
 
 class LogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        operation_description="Logout user (requires authentication)",
-        security=[{"Bearer": []}],
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=["refresh"],
-            properties={
-                "refresh": openapi.Schema(type=openapi.TYPE_STRING, description="Refresh token")
-            }
-        ),
-        responses={205: "User logged out successfully", 400: "Invalid token"}
-    )
     def post(self, request, *args, **kwargs):
         try:
-            refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"message": "User logged out successfully"}, status=status.HTTP_205_RESET_CONTENT)
+            refresh_token = request.COOKIES.get('refresh_token')
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            
+            response = Response(
+                {"message": "User logged out successfully"}, 
+                status=status.HTTP_205_RESET_CONTENT
+            )
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            
+            return response
         except Exception as e:
-            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Logout failed"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -100,4 +119,26 @@ class EmailTokenObtainPairView(TokenObtainPairView):
         responses={200: "JWT tokens with user info"}
     )
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            data = response.data
+            
+            response.set_cookie(
+                key='access_token',
+                value=data['user']['token'],
+                httponly=True,
+                secure=False,
+                samesite='Strict',
+                max_age=3600
+            )
+            response.set_cookie(
+                key='refresh_token',
+                value=data['refresh'],
+                httponly=True,
+                secure=False,
+                samesite='Strict',
+                max_age=86400 * 3
+            )
+        
+        return response

@@ -11,6 +11,7 @@ class EventService {
     async getLatestEvents(): Promise<Event[] | null> {
         try {
             const response = await axiosInstance.get("events/events/latest/");
+            
             return response.data;
         } catch (err) {
             console.error("Error fetching latest events:", err);

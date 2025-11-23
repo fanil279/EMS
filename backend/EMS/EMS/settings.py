@@ -1,7 +1,3 @@
-"""
-Django settings for EMS project.
-"""
-
 from dotenv import load_dotenv
 import os
 from pathlib import Path
@@ -95,6 +91,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     os.getenv('FRONTEND_URL', 'http://localhost:3000'),

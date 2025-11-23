@@ -2,9 +2,9 @@ interface User {
     id: number;
     name: string;
     email: string;
-    token: string;
     institutionName?: string;
     institutionAddress?: string;
+    token: string;
 }
 
 export interface AuthState {
@@ -12,7 +12,24 @@ export interface AuthState {
     user: User | null;
 }
 
-export interface LoginResponse {
+export interface SigninResponse {
     user: User;
     refresh: string;
+}
+
+export interface AuthModalProps {
+    onClose: () => void;
+}
+
+export interface RegisterPayload {
+    name: string;
+    email: string;
+    password: string;
+    institution_name?: string;
+    institution_address?: string;
+}
+
+export interface SigninPayload {
+    email: string;
+    password: string;
 }

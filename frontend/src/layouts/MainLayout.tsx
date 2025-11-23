@@ -1,9 +1,24 @@
+import { useState } from 'react';
 import { type FC } from 'react';
 import { Outlet } from "react-router-dom";
-import { Calendar } from 'lucide-react'
+import { Calendar } from 'lucide-react';
 import Button from '../components/Button';
+import RegisterModal from '../features/auth/modals/RegisterModal';
+import SigninModal from '../features/auth/modals/SigninModal';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store';
+import authService from '../services/authService';
 
 const MainLayout: FC = () => {
+    const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+    const [showSigninModal, setShowSigninModal] = useState(false);
+
+    async function handleLogout() {
+        await authService.logout;
+    }
+    
     return (
         <div className='min-h-screen flex flex-col bg-gray-100'>
             <header className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-gray-300">
@@ -14,22 +29,40 @@ const MainLayout: FC = () => {
                             <span className="text-xl font-bold text-white">EventHub</span>
                         </a>
 
-                        <div>
-                            <Button
-                                variant="secondary"
-                                className="mr-4"
-                                // onClick={}
-                            >
-                                Sign Up
-                            </Button>
+                        {!isAuthenticated ? (
+                            <div>
+                                <Button
+                                    variant="secondary"
+                                    className="mr-4"
+                                    onClick={() => setShowRegisterModal(true)}
+                                >
+                                    Register
+                                </Button>
 
-                            <Button
-                                variant="secondary"
-                                // onClick={}
-                            >
-                                Sign In
-                            </Button>
-                        </div>
+                                {showRegisterModal &&  <RegisterModal onClose={() => setShowRegisterModal(false)} />}
+
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => setShowSigninModal(true)}
+                                >
+                                    Sign In
+                                </Button>
+
+                                {showSigninModal && <SigninModal onClose={() => setShowSigninModal(false)} />}
+                            </div>
+                        ) : (
+                                <div className="flex items-center gap-20">
+                                    <span className="text-white">Welcome, {user?.name}!</span>
+
+                                    <Button
+                                        variant="secondary"
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </Button>
+                                </div>
+                            )   
+                        }
                     </nav>
                 </div>
             </header>
