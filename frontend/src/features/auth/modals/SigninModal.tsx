@@ -3,7 +3,7 @@ import type { AuthModalProps } from "../../../types";
 import Button from '../../../components/Button';
 import authService from "../../../services/authService";
 import { useDispatch } from 'react-redux';
-import { login } from "../authSlice";
+import { signIn } from "../authSlice";
 import type { AppDispatch } from '../../../store';
 
 const Login: FC<AuthModalProps> = ({ onClose }) => {
@@ -26,7 +26,7 @@ const Login: FC<AuthModalProps> = ({ onClose }) => {
         });
 
         if (response) {
-            dispatch(login(response));
+            dispatch(signIn(response));
 
             onClose()
         }
