@@ -1,4 +1,5 @@
 import axios from "axios";
+import authService from "../services/authService";
 import { store } from "../store";
 import { logout } from "../features/auth/authSlice";
 
@@ -8,11 +9,13 @@ const axiosInstance = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
+
     withCredentials: true,
 });
 
 axiosInstance.interceptors.response.use(
     (response) => response,
+    
     async (err) => {
         const originalRequest = err.config;
         
@@ -20,14 +23,14 @@ axiosInstance.interceptors.response.use(
             return Promise.reject(err);
         }
 
+        if (originalRequest.url.includes("logout")) {
+            return Promise.reject(err);
+        }
+
         try {
             originalRequest._retry = true;
             
-            await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/accounts/token/refresh/`,
-                {},
-                { withCredentials: true }
-            );
+            await authService.verifyAuth();
             
             return axiosInstance(originalRequest);
         } catch (refreshError) {

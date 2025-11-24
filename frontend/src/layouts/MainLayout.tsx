@@ -1,22 +1,32 @@
-import { useState } from 'react';
-import { type FC } from 'react';
+import { type FC, useState } from 'react';
 import { Outlet } from "react-router-dom";
 import { Calendar } from 'lucide-react';
 import Button from '../components/Button';
 import RegisterModal from '../features/auth/modals/RegisterModal';
 import SigninModal from '../features/auth/modals/SigninModal';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../store';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState, AppDispatch } from '../store';
 import authService from '../services/authService';
+import { logout } from '../features/auth/authSlice';
 
 const MainLayout: FC = () => {
     const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+
+    const dispatch = useDispatch<AppDispatch>();
 
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showSigninModal, setShowSigninModal] = useState(false);
 
     async function handleLogout() {
-        await authService.logout;
+        try {
+            const response = await authService.logout();
+
+            if (response) {
+                dispatch(logout());
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
     
     return (

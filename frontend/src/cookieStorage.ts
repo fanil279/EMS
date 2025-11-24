@@ -9,7 +9,7 @@ export const cookieStorage = {
     setItem: (key: string, value: string): Promise<void> => {
         Cookies.set(key, value, { 
             expires: 7, 
-            secure: !isDev, 
+            secure: !isDev,
             sameSite: isDev ? "Lax" : "None",
             path: '/',
         });

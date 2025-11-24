@@ -5,12 +5,16 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.contrib.auth import authenticate
 
 from .models import AppUser
 from .serializers import RegistrationSerializer
-from django.contrib.auth import authenticate
+
+import os
+IS_DEV = os.getenv("DJANGO_ENV", "development") == "development"
 
 
+# Registration
 class RegistrationView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [AllowAny]
@@ -26,6 +30,8 @@ class RegistrationView(generics.CreateAPIView):
         user = serializer.save()
 
         refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
 
         response = Response({
             "user": {
@@ -34,31 +40,34 @@ class RegistrationView(generics.CreateAPIView):
                 "email": user.email,
                 "institutionName": user.institution.name if user.institution else None,
                 "institutionAddress": user.institution.address if user.institution else None,
-                "token": str(refresh.access_token),
+                "token": access_token,
             },
-            "refresh": str(refresh)
+            "refresh": refresh_token
         }, status=status.HTTP_201_CREATED)
 
         response.set_cookie(
             key='access_token',
-            value=str(refresh.access_token),
+            value=access_token,
             httponly=True,
-            secure=False,
-            samesite='Lax',
-            max_age=3600
+            secure=not IS_DEV,
+            samesite="Lax" if IS_DEV else "None",
+            max_age=3600,
+            path='/'
         )
         response.set_cookie(
             key='refresh_token',
-            value=str(refresh),
+            value=refresh_token,
             httponly=True,
-            secure=False,
-            samesite='Lax',
-            max_age=86400 * 3
+            secure=not IS_DEV,
+            samesite="Lax" if IS_DEV else "None",
+            max_age=86400*3,
+            path='/'
         )
-        
+
         return response
 
 
+# Logout
 class LogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -68,21 +77,35 @@ class LogoutView(generics.GenericAPIView):
             if refresh_token:
                 token = RefreshToken(refresh_token)
                 token.blacklist()
-            
+
             response = Response(
-                {"message": "User logged out successfully"}, 
+                {"message": "User logged out successfully"},
                 status=status.HTTP_205_RESET_CONTENT
             )
-            response.delete_cookie('access_token')
-            response.delete_cookie('refresh_token')
-            
+
+            # Delete cookies
+            response.delete_cookie(
+                'access_token',
+                path='/',
+                secure=not IS_DEV,
+                samesite="Lax" if IS_DEV else "None"
+            )
+            response.delete_cookie(
+                'refresh_token',
+                path='/',
+                secure=not IS_DEV,
+                samesite="Lax" if IS_DEV else "None"
+            )
+
             return response
-        except Exception as e:
+        except Exception:
             return Response(
-                {"error": "Logout failed"}, 
+                {"error": "Logout failed"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
+# Login
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -97,6 +120,9 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError("Invalid email or password")
 
         refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
         return {
             "user": {
                 "id": user.id,
@@ -104,10 +130,11 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
                 "email": user.email,
                 "institutionName": user.institution.name if user.institution else None,
                 "institutionAddress": user.institution.address if user.institution else None,
-                "token": str(refresh.access_token),
+                "token": access_token,
             },
-            "refresh": str(refresh)
+            "refresh": refresh_token
         }
+
 
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer
@@ -120,25 +147,28 @@ class EmailTokenObtainPairView(TokenObtainPairView):
     )
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        
+
         if response.status_code == 200:
-            data = response.data
-            
+            access_token = response.data['user']['token']
+            refresh_token = response.data['refresh']
+
             response.set_cookie(
                 key='access_token',
-                value=data['user']['token'],
+                value=access_token,
                 httponly=True,
-                secure=False,
-                samesite='Lax',
-                max_age=3600
+                secure=not IS_DEV,
+                samesite="Lax" if IS_DEV else "None",
+                max_age=3600,
+                path='/'
             )
             response.set_cookie(
                 key='refresh_token',
-                value=data['refresh'],
+                value=refresh_token,
                 httponly=True,
-                secure=False,
-                samesite='Lax',
-                max_age=86400 * 3
+                secure=not IS_DEV,
+                samesite="Lax" if IS_DEV else "None",
+                max_age=86400*3,
+                path='/'
             )
-        
+
         return response

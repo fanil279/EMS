@@ -30,22 +30,27 @@ class AuthService {
         }
     }
 
-    async logout(): Promise<void> {
+    async logout(): Promise<boolean> {
         try {
-            
-        } catch (err) {
+            await axiosInstance.post("accounts/logout/");
+
+            return true;
+        } catch (err: any) {
+            if (err.response?.status === 401) return true;
             console.error("Error logging out the user:", err);
             throw err;
         }
     }
 
-    async verifyAuth(): Promise<SigninResponse | null> {
+    async verifyAuth(): Promise<void> {
         try {
-            const response = await axiosInstance.get("accounts/verify/");
-            return { user: response.data.user, refresh: '' };
+            await axiosInstance.post(
+                "accounts/token/refresh/",
+                {},
+                {withCredentials: true}
+            );
         } catch (err) {
             console.error("Auth verification failed:", err);
-            return null;
         }
     }
 }

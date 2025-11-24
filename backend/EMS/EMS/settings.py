@@ -122,7 +122,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-ASGI_APPLICATION = "your_project.asgi.application"
+ASGI_APPLICATION = "EMS.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
