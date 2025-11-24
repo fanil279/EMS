@@ -44,7 +44,7 @@ class RegistrationView(generics.CreateAPIView):
             value=str(refresh.access_token),
             httponly=True,
             secure=False,
-            samesite='Strict',
+            samesite='Lax',
             max_age=3600
         )
         response.set_cookie(
@@ -52,7 +52,7 @@ class RegistrationView(generics.CreateAPIView):
             value=str(refresh),
             httponly=True,
             secure=False,
-            samesite='Strict',
+            samesite='Lax',
             max_age=86400 * 3
         )
         
@@ -129,7 +129,7 @@ class EmailTokenObtainPairView(TokenObtainPairView):
                 value=data['user']['token'],
                 httponly=True,
                 secure=False,
-                samesite='Strict',
+                samesite='Lax',
                 max_age=3600
             )
             response.set_cookie(
@@ -137,7 +137,7 @@ class EmailTokenObtainPairView(TokenObtainPairView):
                 value=data['refresh'],
                 httponly=True,
                 secure=False,
-                samesite='Strict',
+                samesite='Lax',
                 max_age=86400 * 3
             )
         
