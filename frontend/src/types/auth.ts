@@ -4,7 +4,6 @@ interface User {
     email: string;
     institutionName?: string;
     institutionAddress?: string;
-    token: string;
 }
 
 export interface AuthState {
@@ -14,6 +13,7 @@ export interface AuthState {
 
 export interface SigninResponse {
     user: User;
+    token: string;
     refresh: string;
 }
 

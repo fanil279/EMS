@@ -40,8 +40,8 @@ class RegistrationView(generics.CreateAPIView):
                 "email": user.email,
                 "institutionName": user.institution.name if user.institution else None,
                 "institutionAddress": user.institution.address if user.institution else None,
-                "token": access_token,
             },
+            "token": access_token,
             "refresh": refresh_token
         }, status=status.HTTP_201_CREATED)
 
@@ -130,8 +130,8 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
                 "email": user.email,
                 "institutionName": user.institution.name if user.institution else None,
                 "institutionAddress": user.institution.address if user.institution else None,
-                "token": access_token,
             },
+            "token": access_token,
             "refresh": refresh_token
         }
 
@@ -149,7 +149,7 @@ class EmailTokenObtainPairView(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
-            access_token = response.data['user']['token']
+            access_token = response.data['token']
             refresh_token = response.data['refresh']
 
             response.set_cookie(

@@ -1,10 +1,23 @@
 import { type FC, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Button from '../../../components/Button';
+import NotAuthModal from '../../auth/modals/NotAuthModal';
 import eventsService from '../../../services/eventsService';
+import type { RootState} from '../../../store';
 import type { Event } from '../../../types';
 
 const Dashboard: FC = () => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
     const [latestEvents, setLatestEvents] = useState<Event[] | null>(null);
+    const [showNotAuthModal, setShowNotAuthModal] = useState(false);
+
+    function requireAuth(action: () => void) {
+        if (isAuthenticated) {
+            action();
+        } else {
+            setShowNotAuthModal(true);
+        }
+    }
 
     useEffect(() => {
         const loadLatestEvents = async () => {
@@ -15,6 +28,7 @@ const Dashboard: FC = () => {
                 console.error('Error fetching latest events:', err);
             }
         };
+        
         loadLatestEvents();
     }, []);
 
@@ -31,8 +45,25 @@ const Dashboard: FC = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4">
-                    <Button variant="primary">Browse Events</Button>
-                    <Button variant="primary">Create Event</Button>
+                    <Button
+                        variant="primary"
+                        onClick={() => requireAuth(() => {
+                            console.log('Browse Events');
+                        })}
+                    >
+                        Browse Events
+                    </Button>
+
+                    <Button
+                        variant="primary"
+                        onClick={() => requireAuth(() => {
+                            console.log('Create Event');
+                        })}
+                    >  
+                        Create Event
+                    </Button>
+
+                    {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
                 </div>
             </section>
 
@@ -79,25 +110,33 @@ const Dashboard: FC = () => {
                                 <Button
                                     variant="primary"
                                     className="mt-4 w-full"
-                                    //onClick={}
+                                    onClick={() => requireAuth(() => {
+                                        console.log('View Details');
+                                    })}
                                 >
                                     View Details
                                 </Button>
 
-                                {latestEvents.length > 6 && (
-                                    <div className='flex justify-center mt-12'>
-                                        <Button
-                                            variant="secondary"
-                                            className="mt-4 w-100"
-                                            //onClick={}
-                                        >
-                                            More events
-                                        </Button>
-                                    </div>
-                                )}
+                                {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
                             </div>
                         ))}
                     </div>
+
+                    {latestEvents && latestEvents.length > 5 && (
+                        <div className='flex justify-center mt-12'>
+                            <Button
+                                variant="secondary"
+                                className="mt-4 w-100"
+                                onClick={() => requireAuth(() => {
+                                    console.log('More events');
+                                })}
+                            >
+                                More events
+                            </Button>
+
+                            {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
+                        </div>
+                    )}
                 </div>
             </section>
         </>
