@@ -11,3 +11,12 @@ export interface Event {
     organiser: User;
     created_at: string;
 }
+
+export interface createEventPayload {
+    title: string;
+    description: string;
+    location: string;
+    start_date: string;
+    end_date: string;
+    registration_deadline: string;
+}

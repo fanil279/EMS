@@ -65,7 +65,7 @@ const Events: FC = () => {
                                 className='mt-4 w-full'
                                 // onClick={}
                             >
-                                View Details
+                                Register for event
                             </Button>
                         </div>
                     ))}

@@ -1,5 +1,9 @@
 import axiosInstance from '../config/axios';
-import type { SigninResponse, RegisterPayload, SigninPayload } from '../types';
+import type {
+    SigninResponse,
+    RegisterPayload,
+    SigninPayload,
+} from '../types';
 
 class AuthService {
     readonly backendUrl: string;
@@ -43,18 +47,6 @@ class AuthService {
             console.error('Error logging out the user:', err);
 
             throw err;
-        }
-    }
-
-    async verifyAuth(): Promise<void> {
-        try {
-            await axiosInstance.post(
-                'accounts/token/refresh/',
-                {},
-                {withCredentials: true}
-            );
-        } catch (err) {
-            console.error('Auth verification failed:', err);
         }
     }
 }

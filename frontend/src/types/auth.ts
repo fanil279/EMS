@@ -9,16 +9,13 @@ interface User {
 export interface AuthState {
     isAuthenticated: boolean;
     user: User | null;
+    token: string | null;
 }
 
 export interface SigninResponse {
     user: User;
     token: string;
     refresh: string;
-}
-
-export interface AuthModalProps {
-    onClose: () => void;
 }
 
 export interface RegisterPayload {

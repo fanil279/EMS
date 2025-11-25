@@ -1,12 +1,10 @@
 import axios from 'axios';
-import authService from '../services/authService';
 import { store } from '../store';
 import { logout } from '../features/auth/authSlice';
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     timeout: 10000,
-
     headers: {
         'Content-Type': 'application/json',
     },
@@ -14,33 +12,27 @@ const axiosInstance = axios.create({
     withCredentials: true,
 });
 
+axiosInstance.interceptors.request.use((config) => {
+    const state = store.getState();
+    const token = state.auth.token;
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
+
 axiosInstance.interceptors.response.use(
     (response) => response,
     
-    async (err) => {
-        const originalRequest = err.config;
+    (err) => {
+        if (err.response?.status !== 401) return Promise.reject(err);
+
+        store.dispatch(logout());
         
-        if (err.response?.status !== 401 || originalRequest._retry) {
-            return Promise.reject(err);
-        }
-
-        if (originalRequest.url.includes('logout')) {
-            return Promise.reject(err);
-        }
-
-        try {
-            originalRequest._retry = true;
-            
-            await authService.verifyAuth();
-            
-            return axiosInstance(originalRequest);
-        } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-
-            store.dispatch(logout());
-            
-            return Promise.reject(refreshError);
-        }
+        return Promise.reject(err);
     }
 );
 

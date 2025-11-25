@@ -4,9 +4,9 @@ import { signIn } from '../authSlice';
 import Button from '../../../components/Button';
 import authService from '../../../services/authService';
 import type { AppDispatch } from '../../../store';
-import type { AuthModalProps } from '../../../types';
+import type { ModalProps } from '../../../types';
 
-const RegisterModal: FC<AuthModalProps> = ({ onClose }) => {
+const RegisterModal: FC<ModalProps> = ({ onClose }) => {
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [name, setName] = useState<string>('');
@@ -42,9 +42,8 @@ const RegisterModal: FC<AuthModalProps> = ({ onClose }) => {
 				onClose();
 			}
 
-		} catch (error) {
-			console.error('Registration error:', error);
-			alert('Registration failed. Please try again.');
+		} catch (err) {
+			throw err;
     	}
 	}
 

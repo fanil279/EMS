@@ -2,6 +2,7 @@ import { type FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/Button';
+import CreateEventModal from '../../events/modals/CreateEventModal';
 import NotAuthModal from '../../auth/modals/NotAuthModal';
 import eventsService from '../../../services/eventsService';
 import type { RootState} from '../../../store';
@@ -13,6 +14,7 @@ const Dashboard: FC = () => {
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
     const [latestEvents, setLatestEvents] = useState<Event[] | null>(null);
     const [showNotAuthModal, setShowNotAuthModal] = useState(false);
+    const [showCreateEventModal, setShowCreateEventModal] = useState(false);
 
     function requireAuth(action: () => void) {
         if (isAuthenticated) {
@@ -60,12 +62,13 @@ const Dashboard: FC = () => {
                     <Button
                         variant='primary'
                         onClick={() => requireAuth(() => {
-                            console.log('Create Event');
+                            setShowCreateEventModal(true);
                         })}
                     >  
                         Create Event
                     </Button>
-
+                    
+                    {showCreateEventModal && <CreateEventModal onClose={() => setShowCreateEventModal(false)} />}
                     {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
                 </div>
             </section>
@@ -114,10 +117,10 @@ const Dashboard: FC = () => {
                                     variant='primary'
                                     className='mt-4 w-full'
                                     onClick={() => requireAuth(() => {
-                                        console.log('View Details');
+                                        console.log('Register for event');
                                     })}
                                 >
-                                    View Details
+                                    Register for event
                                 </Button>
 
                                 {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}

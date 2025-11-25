@@ -4,9 +4,9 @@ import { signIn } from '../authSlice';
 import Button from '../../../components/Button';
 import authService from '../../../services/authService';
 import type { AppDispatch } from '../../../store';
-import type { AuthModalProps } from '../../../types';
+import type { ModalProps } from '../../../types';
 
-const Login: FC<AuthModalProps> = ({ onClose }) => {
+const Login: FC<ModalProps> = ({ onClose }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const [password, setPassword] = useState<string>('');

@@ -16,6 +16,9 @@ class EventListCreateAPIView(generics.ListCreateAPIView):
             return [IsAuthenticated()]
         return [AllowAny()]
 
+    def get_queryset(self):
+        return Event.objects.order_by('-created_at')
+
     @swagger_auto_schema(
         operation_description="List all events (public)",
         security=[],
@@ -32,7 +35,7 @@ class EventListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         try:
-            serializer.save(participant=self.request.user)
+            serializer.save(organiser=self.request.user)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
@@ -58,25 +61,11 @@ class EventRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOrganiserOrAdmin]
 
     @swagger_auto_schema(
-        operation_description="Retrieve a specific event (any authenticated user can see if allowed)",
-        security=[{"Bearer": []}],
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @swagger_auto_schema(
         operation_description="Update an event (organiser or admin only)",
         security=[{"Bearer": []}],
     )
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Partial update an event (organiser or admin only)",
-        security=[{"Bearer": []}],
-    )
-    def patch(self, request, *args, **kwargs):
-        return super().patch(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Delete an event (organiser or admin only)",
