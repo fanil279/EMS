@@ -1,13 +1,14 @@
-import axios from "axios";
-import authService from "../services/authService";
-import { store } from "../store";
-import { logout } from "../features/auth/authSlice";
+import axios from 'axios';
+import authService from '../services/authService';
+import { store } from '../store';
+import { logout } from '../features/auth/authSlice';
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     timeout: 10000,
+
     headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
     },
 
     withCredentials: true,
@@ -23,7 +24,7 @@ axiosInstance.interceptors.response.use(
             return Promise.reject(err);
         }
 
-        if (originalRequest.url.includes("logout")) {
+        if (originalRequest.url.includes('logout')) {
             return Promise.reject(err);
         }
 
@@ -34,8 +35,10 @@ axiosInstance.interceptors.response.use(
             
             return axiosInstance(originalRequest);
         } catch (refreshError) {
-            console.error("Token refresh failed:", refreshError);
+            console.error('Token refresh failed:', refreshError);
+
             store.dispatch(logout());
+            
             return Promise.reject(refreshError);
         }
     }

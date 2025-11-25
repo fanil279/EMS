@@ -1,4 +1,4 @@
-import axiosInstance from "../config/axios";
+import axiosInstance from '../config/axios';
 import type { SigninResponse, RegisterPayload, SigninPayload } from '../types';
 
 class AuthService {
@@ -10,34 +10,38 @@ class AuthService {
 
     async register(payload: RegisterPayload): Promise<SigninResponse | null> {
         try {
-            const response = await axiosInstance.post("accounts/register/", payload);
+            const response = await axiosInstance.post('accounts/register/', payload);
 
             return response.data;
         } catch (err) {
-            console.error("Error registering a user:", err);
+            console.error('Error registering a user:', err);
+            
             throw err;
         }
     }
 
     async signIn(payload: SigninPayload): Promise<SigninResponse | null> {
         try {
-            const response = await axiosInstance.post("accounts/login/", payload);
+            const response = await axiosInstance.post('accounts/login/', payload);
             
             return response.data;
         } catch (err) {
-            console.error("Error logging in a user:", err);
+            console.error('Error logging in a user:', err);
+
             throw err;
         }
     }
 
     async logout(): Promise<boolean> {
         try {
-            await axiosInstance.post("accounts/logout/");
+            await axiosInstance.post('accounts/logout/');
 
             return true;
         } catch (err: any) {
             if (err.response?.status === 401) return true;
-            console.error("Error logging out the user:", err);
+
+            console.error('Error logging out the user:', err);
+
             throw err;
         }
     }
@@ -45,12 +49,12 @@ class AuthService {
     async verifyAuth(): Promise<void> {
         try {
             await axiosInstance.post(
-                "accounts/token/refresh/",
+                'accounts/token/refresh/',
                 {},
                 {withCredentials: true}
             );
         } catch (err) {
-            console.error("Auth verification failed:", err);
+            console.error('Auth verification failed:', err);
         }
     }
 }
