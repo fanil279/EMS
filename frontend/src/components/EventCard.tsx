@@ -33,8 +33,8 @@ const EventCard: FC = () => {
                         <div
                             key={event.id}
                             className='
-                                bg-slate-950/15
-                                backdrop-blur 
+                                bg-slate-600/15
+                                backdrop-blur
                                 border border-white/10 
                                 rounded-xl 
                                 p-6 
@@ -47,16 +47,14 @@ const EventCard: FC = () => {
                         >
                             <div className='flex gap-3'>
                                 <Button
-                                    variant='secondary'
-                                    className='text-white shadow-2xl'
+                                    variant='tertiary'
                                     // onClick={}
                                 >
                                     Edit event
                                 </Button>
 
                                 <Button
-                                    variant='secondary'
-                                    className='text-white shadow-2xl'
+                                    variant='tertiary'
                                     // onClick={}
                                 >
                                     Delete event

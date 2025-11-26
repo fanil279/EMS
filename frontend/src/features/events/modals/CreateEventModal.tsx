@@ -1,6 +1,7 @@
 import { type FC, useState } from 'react';
-import type { ModalProps } from '../../../types';
+import Button from '../../../components/Button';
 import eventsService from '../../../services/eventsService';
+import type { ModalProps } from '../../../types';
 
 const CreateEventModal: FC<ModalProps> = ({ onClose }) => {
     const [title, setTitle] = useState('');
@@ -129,12 +130,13 @@ const CreateEventModal: FC<ModalProps> = ({ onClose }) => {
                     </div>
                 </div>
 
-                <button
+                <Button
+                    variant='primary'
+                    className='w-full mt-8'
                     onClick={() => handleCreateEvent()}
-                    className="mt-8 w-full bg-blue-600 text-white py-3 rounded-xl text-lg font-semibold hover:bg-blue-700 transition"
                 >
                     Create Event
-                </button>
+                </Button>
             </div>
         </div>
     );
