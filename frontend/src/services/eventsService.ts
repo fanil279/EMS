@@ -67,6 +67,16 @@ class EventService {
             throw err;
         }
     }
+
+    async delteEvent(id: number): Promise<void> {
+        try {
+            await axiosInstance.delete(`events/events/${id}/`);
+        } catch (err) {
+            console.error('Error fetching latest events:', err);
+            
+            throw err;
+        }
+    }
 }
 
 export default new EventService();

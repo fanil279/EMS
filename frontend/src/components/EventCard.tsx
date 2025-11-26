@@ -8,9 +8,11 @@ import EditeventsService from '../services/eventsService';
 import { requireAuth } from '../features/dashboard/pages/Dashboard';
 import type { RootState } from '../store';
 import type { Event } from '../types';
+import eventsService from '../services/eventsService';
 
 const EventCard: FC = () => {
     let eventId;
+    const userId = useSelector((state: RootState) => state.auth.user?.id);
 
     const [events, setEvents] = useState<Event[] | null>(null);
     const [showEventModal, setShowEventModal] = useState(false);
@@ -61,27 +63,33 @@ const EventCard: FC = () => {
                                     text-white
                                 '
                             >
-                                <div className='flex gap-3'>
-                                    <Button
-                                        variant='tertiary'
-                                        onClick={() => {
-                                            requireAuth(() => {
-                                                setShowEventModal(true);
-                                            }, isAuthenticated)
-                                        }}
-                                    >
-                                        Edit event
-                                    </Button>
+                                {userId === event.organiser.id && (
+                                    <div className='flex gap-3'>
+                                        <Button
+                                            variant='tertiary'
+                                            onClick={() => {
+                                                requireAuth(() => {
+                                                    setShowEventModal(true);
+                                                }, isAuthenticated)
+                                            }}
+                                        >
+                                            Edit event
+                                        </Button>
 
-                                    {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
+                                        {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
 
-                                    <Button
-                                        variant='tertiary'
-                                        // onClick={} - add delete handler if needed
-                                    >
-                                        Delete event
-                                    </Button>
-                                </div>
+                                        <Button
+                                            variant='tertiary'
+                                            onClick={() => {
+                                                requireAuth(async () => {
+                                                    await eventsService.delteEvent(event.id);
+                                                }, isAuthenticated)
+                                            }}
+                                        >
+                                            Delete event
+                                        </Button>
+                                    </div>
+                                )}
 
                                 <h3 className='text-xl font-semibold'>{event.title}</h3>
 
