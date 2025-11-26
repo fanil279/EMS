@@ -109,7 +109,7 @@ const Dashboard: FC = () => {
                                 </div>
 
                                 <div className='pt-2 text-gray-300 text-sm'>
-                                    <p><span className='font-medium text-white'>Organiser:</span> {event.organiser.institution?.name ? event.organiser.institution.id : event.organiser.name}</p>
+                                    <p><span className='font-medium text-white'>Organiser:</span> {event.organiser.institution?.name}</p>
                                     <p><span className='font-medium text-white'>Location:</span> {event.location}</p>
                                 </div>
 

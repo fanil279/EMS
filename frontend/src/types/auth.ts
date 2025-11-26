@@ -2,8 +2,8 @@ interface User {
     id: number;
     name: string;
     email: string;
-    institutionName?: string;
-    institutionAddress?: string;
+    institutionName: string;
+    institutionAddress: string;
 }
 
 export interface AuthState {

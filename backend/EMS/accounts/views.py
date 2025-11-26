@@ -72,37 +72,21 @@ class LogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        try:
-            refresh_token = request.COOKIES.get('refresh_token')
-            if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
+        response = Response(
+            {"message": "User logged out successfully"},
+            status=status.HTTP_205_RESET_CONTENT
+        )
 
-            response = Response(
-                {"message": "User logged out successfully"},
-                status=status.HTTP_205_RESET_CONTENT
-            )
+        response.delete_cookie(
+            'access_token',
+            path='/',
+        )
+        response.delete_cookie(
+            'refresh_token',
+            path='/',
+        )
 
-            # Delete cookies
-            response.delete_cookie(
-                'access_token',
-                path='/',
-                secure=not IS_DEV,
-                samesite="Lax" if IS_DEV else "None"
-            )
-            response.delete_cookie(
-                'refresh_token',
-                path='/',
-                secure=not IS_DEV,
-                samesite="Lax" if IS_DEV else "None"
-            )
-
-            return response
-        except Exception:
-            return Response(
-                {"error": "Logout failed"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return response
 
 
 # Login

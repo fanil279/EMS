@@ -1,12 +1,20 @@
 from rest_framework import serializers
 from .models import Event, Registration
-from accounts.models import AppUser
+from accounts.models import AppUser, Institution
+
+
+class InstitutionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Institution
+        fields = ["id", "name", "address"]
 
 
 class UserSerializer(serializers.ModelSerializer):
+    institution = InstitutionSerializer(read_only=True)
+
     class Meta:
         model = AppUser
-        fields = ["id", "name", "email", "role"]
+        fields = ["id", "name", "email", "role", "institution"]
 
 
 class EventSerializer(serializers.ModelSerializer):

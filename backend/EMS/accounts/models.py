@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class Institution(models.Model):
     name = models.CharField(max_length=255)
-    address = models.TextField(blank=True, null=True)
+    address = models.TextField(blank=False, null=False)
 
     def __str__(self):
         return self.name
@@ -34,7 +34,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=150)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
     institution = models.ForeignKey(
-        Institution, on_delete=models.SET_NULL, null=True, blank=True
+        Institution, on_delete=models.CASCADE, null=False, blank=False
     )
 
     is_active = models.BooleanField(default=True)
