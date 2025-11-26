@@ -68,6 +68,13 @@ class EventRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         return super().put(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        operation_description="Partial update an event (organiser or admin only)",
+        security=[{"Bearer": []}],
+    )
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
+    @swagger_auto_schema(
         operation_description="Delete an event (organiser or admin only)",
         security=[{"Bearer": []}],
     )

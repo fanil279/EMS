@@ -1,23 +1,27 @@
 import { type FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import useIsAuthModal from '../../../hooks/useIsAuth';
 import EventCard from '../../../components/EventCard';
 import Button from '../../../components/Button';
-import CreateEventModal from '../../events/modals/CreateEventModal';
+import CreateEventModal from '../../events/modals/EventModal';
 import NotAuthModal from '../../auth/modals/NotAuthModal';
 import eventsService from '../../../services/eventsService';
 import type { RootState} from '../../../store';
 import type { Event } from '../../../types';
 
+export let requireAuth: Function;
+
 const Dashboard: FC = () => {
     const navigate = useNavigate();
 
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { showNotAuthModal, setShowNotAuthModal } = useIsAuthModal();
+
     const [latestEvents, setLatestEvents] = useState<Event[] | null>(null);
-    const [showNotAuthModal, setShowNotAuthModal] = useState(false);
     const [showCreateEventModal, setShowCreateEventModal] = useState(false);
 
-    function requireAuth(action: () => void) {
+    requireAuth = (action: () => void, isAuthenticated: boolean) => {
         if (isAuthenticated) {
             action();
         } else {
@@ -55,7 +59,7 @@ const Dashboard: FC = () => {
                         variant='primary'
                         onClick={() => requireAuth(() => {
                             navigate('/events');
-                        })}
+                        }, isAuthenticated)}
                     >
                         Events
                     </Button>
@@ -64,7 +68,7 @@ const Dashboard: FC = () => {
                         variant='primary'
                         onClick={() => requireAuth(() => {
                             setShowCreateEventModal(true);
-                        })}
+                        }, isAuthenticated)}
                     >  
                         Create Event
                     </Button>
@@ -84,7 +88,7 @@ const Dashboard: FC = () => {
                             className='mt-4 w-100'
                             onClick={() => requireAuth(() => {
                                 navigate('/events');
-                            })}
+                            }, isAuthenticated)}
                         >
                             More events
                         </Button>

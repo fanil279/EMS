@@ -12,7 +12,7 @@ export interface Event {
     created_at: string;
 }
 
-export interface createEventPayload {
+export interface EventPayload {
     title: string;
     description: string;
     location: string;

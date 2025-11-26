@@ -1,9 +1,9 @@
 import { type FC, useState } from 'react';
 import Button from '../../../components/Button';
 import eventsService from '../../../services/eventsService';
-import type { ModalProps } from '../../../types';
+import type { ModalProps, EventPayload } from '../../../types';
 
-const CreateEventModal: FC<ModalProps> = ({ onClose }) => {
+const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
@@ -11,36 +11,85 @@ const CreateEventModal: FC<ModalProps> = ({ onClose }) => {
     const [endDate, setEndDate] = useState('');
     const [registrationDeadline, setRegistrationDeadline] = useState('');
 
-    const handleCreateEvent = async () => {
-        if  (
-                !title ||
-                !location ||
-                !description ||
-                !startDate ||
-                !endDate ||
-                !registrationDeadline
-            )
-        {
-            alert('Fill in all the required fileds!');
-            
-            return;
-        }
-        
-        try {
-            const response = await eventsService.createEvent({
-                title: title,
-                description: description,
-                location: location,
-                start_date: startDate,
-                end_date: endDate,
-                registration_deadline: registrationDeadline,
-            });
+    let handleEvent: Function;
 
-            if (response) onClose();
-        } catch (err) {
-            throw err;
+    if (action && eventId) {
+        if (
+            !title ||
+            !location ||
+            !description ||
+            !startDate ||
+            !endDate ||
+            !registrationDeadline
+        ) {
+            const payload: Partial<EventPayload> = {};
+
+            if (title) payload.title = title;
+            if (description) payload.description = description;
+            if (location) payload.location = location;
+            if (startDate) payload.start_date = startDate;
+            if (endDate) payload.end_date = endDate;
+            if (registrationDeadline) payload.registration_deadline = registrationDeadline;
+
+            handleEvent = async () => {
+                try {
+                    const response = await eventsService.editEventPartial(payload, eventId);
+
+                    if (response) onClose();
+                } catch (err) {
+                    throw err;
+                }
+            }; 
+        } else {
+            handleEvent = async () => {
+                try {
+                    const response = await eventsService.editEvent({
+                        title: title,
+                        description: description,
+                        location: location,
+                        start_date: startDate,
+                        end_date: endDate,
+                        registration_deadline: registrationDeadline,
+                    }, eventId);
+
+                    if (response) onClose();
+                } catch (err) {
+                    throw err;
+                }
+            };
         }
-    };
+    } else {
+        handleEvent = async () => {
+            if  (
+                    !title ||
+                    !location ||
+                    !description ||
+                    !startDate ||
+                    !endDate ||
+                    !registrationDeadline
+                )
+            {
+                alert('Fill in all the required fileds!');
+                
+                return;
+            }
+            
+            try {
+                const response = await eventsService.createEvent({
+                    title: title,
+                    description: description,
+                    location: location,
+                    start_date: startDate,
+                    end_date: endDate,
+                    registration_deadline: registrationDeadline,
+                });
+
+                if (response) onClose();
+            } catch (err) {
+                throw err;
+            }
+        };
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -52,9 +101,15 @@ const CreateEventModal: FC<ModalProps> = ({ onClose }) => {
                     &times;
                 </button>
 
-                <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
-                    Create Event
-                </h2>
+                {action ? (
+                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+                        Edit Event
+                    </h2>
+                ) : (
+                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+                        Create Event
+                    </h2>
+                )}
 
                 <div className="space-y-5">
                     <div>
@@ -130,13 +185,23 @@ const CreateEventModal: FC<ModalProps> = ({ onClose }) => {
                     </div>
                 </div>
 
-                <Button
-                    variant='primary'
-                    className='w-full mt-8'
-                    onClick={() => handleCreateEvent()}
-                >
-                    Create Event
-                </Button>
+                {action ? (
+                    <Button
+                        variant='primary'
+                        className='w-full mt-8'
+                        onClick={() => handleEvent()}
+                    >
+                        Edit Event
+                    </Button>
+                ) : (
+                    <Button
+                        variant='primary'
+                        className='w-full mt-8'
+                        onClick={() => handleEvent()}
+                    >
+                        Create Event
+                    </Button>
+                )}
             </div>
         </div>
     );

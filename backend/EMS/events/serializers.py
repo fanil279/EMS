@@ -27,7 +27,7 @@ class EventSerializer(serializers.ModelSerializer):
             "start_date", "end_date", "registration_deadline",
             "organiser", "created_at"
         ]
-        read_only_fields = ["organiser"]
+        read_only_fields = ["organiser",]
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
