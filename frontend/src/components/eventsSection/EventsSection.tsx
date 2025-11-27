@@ -1,6 +1,6 @@
 import { type FC, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setRegistered } from '../../components/eventCard/eventCardSlice';
+import { setRegistered } from './eventCardSlice';
 import useIsAuthModal from '../../hooks/useIsAuth';
 import Button from '../Button';
 import EventModal from '../../features/events/modals/EventModal';
@@ -38,7 +38,7 @@ const EventCard: FC = () => {
     }, []);
 
     return (
-        <div className='bg-blue-900/50 py-20'>
+        <div className={events?.length! > 0 ? 'bg-blue-900/50 py-20' : 'bg-blue-900/50 py-55'}>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 
                 <div className='mb-12'>
@@ -122,7 +122,9 @@ const EventCard: FC = () => {
                                             variant='tertiary'
                                             onClick={() => {
                                                 requireAuth(async () => {
-                                                    await eventsService.delteEvent(event.id);
+                                                    await eventsService.deleteEvent(event.id);
+            
+                                                    setEvents(prev => prev ? prev.filter(e => e.id !== event.id) : null);
                                                 }, isAuthenticated)
                                             }}
                                         >
@@ -141,7 +143,13 @@ const EventCard: FC = () => {
             {showEventModal && (
                 <EventModal
                     onClose={() => setShowEventModal(false)}
-                    action={() => true}
+                    action={selectedEventId != null}
+                    onEventUpdated={(updatedEvent: Event) => {
+                        setEvents((prev) => prev
+                            ? prev.map((e) => e.id === updatedEvent.id ? updatedEvent : e)
+                            : [updatedEvent]
+                        );
+                    }}
                     eventId={selectedEventId!}
                 />
             )}

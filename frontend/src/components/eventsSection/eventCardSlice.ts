@@ -11,12 +11,7 @@ const eventRegistrationSlice = createSlice({
 
     reducers: {
         setRegistered: (state, action: PayloadAction<EventRegistration>) => {
-            const eventId = Number(action.payload.event.id);
-
-            state.registrations = {
-                ...state.registrations,
-                [eventId]: action.payload,
-            };
+            state.registrations[action.payload.event.id] = action.payload;
         },
     }
 });

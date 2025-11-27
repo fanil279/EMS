@@ -3,13 +3,15 @@ import Button from '../../../components/Button';
 import eventsService from '../../../services/eventsService';
 import type { ModalProps, EventPayload } from '../../../types';
 
-const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
+const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eventId }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [registrationDeadline, setRegistrationDeadline] = useState('');
+
+    const [error, setError] = useState<string | null>(null);
 
     let handleEvent: Function;
 
@@ -35,27 +37,33 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
                 try {
                     const response = await eventsService.editEventPartial(payload, eventId);
 
-                    if (response) onClose();
+                    if (response) {
+                        onEventUpdated?.(response);
+                        onClose();
+                    }                    
                 } catch (err) {
                     throw err;
                 }
-            }; 
+            };
         } else {
             handleEvent = async () => {
-                try {
-                    const response = await eventsService.editEvent({
-                        title: title,
-                        description: description,
-                        location: location,
-                        start_date: startDate,
-                        end_date: endDate,
-                        registration_deadline: registrationDeadline,
-                    }, eventId);
+            try {
+                const response = await eventsService.editEvent({
+                    title: title,
+                    description: description,
+                    location: location,
+                    start_date: startDate,
+                    end_date: endDate,
+                    registration_deadline: registrationDeadline,
+                }, eventId);
 
-                    if (response) onClose();
-                } catch (err) {
-                    throw err;
+                if (response) {
+                    onClose();
+                    onEventUpdated?.(response);
                 }
+            } catch (err) {
+                throw err;
+            }
             };
         }
     } else {
@@ -75,16 +83,22 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
             }
             
             try {
-                const response = await eventsService.createEvent({
-                    title: title,
-                    description: description,
-                    location: location,
-                    start_date: startDate,
-                    end_date: endDate,
-                    registration_deadline: registrationDeadline,
-                });
+                if ((startDate !> endDate) && (startDate || endDate) !< registrationDeadline) {
+                    const response = await eventsService.createEvent({
+                        title: title,
+                        description: description,
+                        location: location,
+                        start_date: startDate,
+                        end_date: endDate,
+                        registration_deadline: registrationDeadline,
+                    });
 
-                if (response) onClose();
+                    if (response) onClose();
+
+                    window.location.reload();
+                } else {
+                    setError('Please set event start date, end date or registration deadline corretcly!');
+                }
             } catch (err) {
                 throw err;
             }
@@ -157,6 +171,8 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
                                 onChange={(e) => setStartDate(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
+
+                            {error && <span>{error}</span>}
                         </div>
 
                         <div>
@@ -168,6 +184,8 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
                                 onChange={(e) => setEndDate(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
+
+                            {error && <span>{error}</span>}
                         </div>
                     </div>
 
@@ -182,6 +200,8 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, eventId }) => {
                             onChange={(e) => setRegistrationDeadline(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+
+                        {error && <span className='text-red-500'>{error}</span>}
                     </div>
                 </div>
 

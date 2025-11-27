@@ -68,7 +68,7 @@ class EventService {
         }
     }
 
-    async delteEvent(id: number): Promise<void> {
+    async deleteEvent(id: number): Promise<void> {
         try {
             await axiosInstance.delete(`events/events/${id}/`);
         } catch (err) {

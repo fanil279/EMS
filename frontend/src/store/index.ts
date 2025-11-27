@@ -9,7 +9,7 @@ import {
     REGISTER
 } from 'redux-persist';
 import authReducer from '../features/auth/authSlice'
-import eventRegistrationReducer from '../components/eventCard/eventCardSlice';
+import eventRegistrationReducer from '../components/eventsSection/eventCardSlice';
 import storage from 'redux-persist/lib/storage';
 
 const persistConfigAuth = {

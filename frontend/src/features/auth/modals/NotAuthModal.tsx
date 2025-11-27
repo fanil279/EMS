@@ -1,8 +1,8 @@
 import { type FC } from 'react';
 import Button from '../../../components/Button';
-import type { ModalProps } from '../../../types';
+import type { NotAuthModalProps } from '../../../types';
 
-const NotAuthModal: FC<ModalProps> = ({ onClose }) => (
+const NotAuthModal: FC<NotAuthModalProps> = ({ onClose }) => (
     <div className='fixed inset-0 z-50 flex items-center backdrop-blur justify-center p-4'>
         <div className='absolute bg-white rounded-3xl shadow-lg w-full max-w-2xl p-10 max-h-[90vh] overflow-y-auto relative'>
             <button

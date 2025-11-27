@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import EventCard from '../../../components/eventCard/EventCard';
+import EventCard from '../../../components/eventsSection/EventsSection';
 
 const Events: FC = () => (
     <EventCard />
