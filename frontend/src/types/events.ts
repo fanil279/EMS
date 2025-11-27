@@ -12,6 +12,10 @@ export interface Event {
     created_at: string;
 }
 
+export interface EventRegistrationState {
+    registrations: { [eventId: number]: EventRegistration };
+}
+
 export interface EventPayload {
     title: string;
     description: string;
@@ -19,4 +23,16 @@ export interface EventPayload {
     start_date: string;
     end_date: string;
     registration_deadline: string;
+}
+
+export interface EventRegistrationPayload {
+    event_id: number;
+}
+
+export interface EventRegistration {
+    id: number;
+    event: Event;
+    event_id: number;
+    participant: User;
+    created_at: Date;
 }

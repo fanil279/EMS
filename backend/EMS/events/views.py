@@ -1,6 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from drf_yasg.utils import swagger_auto_schema
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import Event, Registration
 from .serializers import EventSerializer, RegistrationSerializer
@@ -87,8 +89,13 @@ class RegistrationListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["participant"] = self.request.user
+        return context
+
     def perform_create(self, serializer):
-        registration = serializer.save(participant=self.request.user)
+        registration = serializer.save()
 
         channel_layer = get_channel_layer()
 
@@ -101,8 +108,8 @@ class RegistrationListCreateAPIView(generics.ListCreateAPIView):
                 }
             )
 
-        notify_user(self.request.user.id, f"You registered for {registration.event.title}!")
-
+        notify_user(self.request.user.id,
+                    f"You registered for {registration.event.title}!")
         notify_user(registration.event.organiser.id,
                     f"{self.request.user.name} registered for your event: {registration.event.title}")
 

@@ -1,5 +1,5 @@
 import axiosInstance from '../config/axios';
-import type { Event, EventPayload } from '../types';
+import type { Event, EventPayload, EventRegistration, EventRegistrationPayload } from '../types';
 
 class EventService {
     readonly backendUrl: string;
@@ -26,7 +26,7 @@ class EventService {
             
             return response.data;
         } catch (err) {
-            console.error('Error fetching latest events:', err);
+            console.error('Error fetching events:', err);
             
             throw err;
         }
@@ -38,7 +38,7 @@ class EventService {
             
             return response.data;
         } catch (err) {
-            console.error('Error fetching latest events:', err);
+            console.error('Error creating an event:', err);
             
             throw err;
         }
@@ -50,7 +50,7 @@ class EventService {
             
             return response.data;
         } catch (err) {
-            console.error('Error fetching latest events:', err);
+            console.error('Error partially editing the event:', err);
             
             throw err;
         }
@@ -62,7 +62,7 @@ class EventService {
             
             return response.data;
         } catch (err) {
-            console.error('Error fetching latest events:', err);
+            console.error('Error editing the event:', err);
             
             throw err;
         }
@@ -72,7 +72,19 @@ class EventService {
         try {
             await axiosInstance.delete(`events/events/${id}/`);
         } catch (err) {
-            console.error('Error fetching latest events:', err);
+            console.error('Error deleting the event:', err);
+            
+            throw err;
+        }
+    }
+
+    async registerEvent(payload: EventRegistrationPayload): Promise<EventRegistration> {
+        try {
+            const response = await axiosInstance.post('events/registrations/', payload);
+
+            return response.data;
+        } catch (err) {
+            console.error('Error registering for the event:', err);
             
             throw err;
         }

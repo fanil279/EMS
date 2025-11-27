@@ -9,19 +9,28 @@ import {
     REGISTER
 } from 'redux-persist';
 import authReducer from '../features/auth/authSlice'
+import eventRegistrationReducer from '../components/eventCard/eventCardSlice';
 import storage from 'redux-persist/lib/storage';
 
-const persistConfig = {
+const persistConfigAuth = {
     key: 'auth',
     storage: storage,
     whitelist: ['isAuthenticated', 'user', 'token'],
 };
 
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const persistConfigEventReg = {
+    key: 'eventRegistration',
+    storage: storage,
+    whitelist: ['registrations'],
+};
+
+const persistedAuthReducer = persistReducer(persistConfigAuth, authReducer);
+const persistedEventRegistrationReducer = persistReducer(persistConfigEventReg, eventRegistrationReducer);
 
 export const store = configureStore({
     reducer: {
-        auth: persistedReducer,
+        auth: persistedAuthReducer,
+        eventRegistration: persistedEventRegistrationReducer,
     },
 
     middleware: (getDefaultMiddleware) =>

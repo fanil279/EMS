@@ -1,29 +1,33 @@
 import { type FC, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import useIsAuthModal from '../hooks/useIsAuth';
-import Button from '../components/Button';
-import EventModal from '../features/events/modals/EventModal';
-import NotAuthModal from '../features/auth/modals/NotAuthModal';
-import EditeventsService from '../services/eventsService';
-import { requireAuth } from '../features/dashboard/pages/Dashboard';
-import type { RootState } from '../store';
-import type { Event } from '../types';
-import eventsService from '../services/eventsService';
+import { useSelector, useDispatch } from 'react-redux';
+import { setRegistered } from '../../components/eventCard/eventCardSlice';
+import useIsAuthModal from '../../hooks/useIsAuth';
+import Button from '../Button';
+import EventModal from '../../features/events/modals/EventModal';
+import NotAuthModal from '../../features/auth/modals/NotAuthModal';
+import eventsService from '../../services/eventsService';
+import { requireAuth } from '../../features/dashboard/pages/Dashboard';
+import type { RootState, AppDispatch } from '../../store';
+import type { Event } from '../../types';
 
 const EventCard: FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+
     const userId = useSelector((state: RootState) => state.auth.user?.id);
+    const registrations = useSelector((state: RootState) => state.eventRegistration.registrations);
+
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     const [events, setEvents] = useState<Event[] | null>(null);
     const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-    const [showEventModal, setShowEventModal] = useState(false);
+    const [showEventModal, setShowEventModal] = useState<boolean>(false);
 
     const { showNotAuthModal, setShowNotAuthModal } = useIsAuthModal();
 
     useEffect(() => {
         const loadLatestEvents = async () => {
             try {
-                const data = await EditeventsService.getEvents();
+                const data = await eventsService.getEvents();
                 if (data) setEvents(data as Event[]);
             } catch (err) {
                 console.error('Error fetching latest events:', err);
@@ -81,11 +85,23 @@ const EventCard: FC = () => {
                                 </div>
 
                                 <Button
-                                    variant='primary'
-                                    className='mt-4 w-full'
-                                    // onClick={} - add registration handler
+                                    variant={registrations[event.id] ? 'success' : 'primary'}
+                                    className={registrations[event.id] ? 'pointer-events-none' : 'mt-4 w-full'}
+                                    onClick={() => {
+                                        requireAuth(async () => {
+                                            const eventRegistered = await eventsService.registerEvent({ event_id: event.id });
+                                            
+                                            if (eventRegistered) {
+                                                dispatch(setRegistered(eventRegistered));
+                                            }
+                                        }, isAuthenticated);
+                                    }}
                                 >
-                                    Register for event
+                                    {registrations[event.id] ? (
+                                        <span>Registered</span>
+                                    ) : (
+                                        <span>Register for event</span>
+                                    )}
                                 </Button>
 
                                 {userId === event.organiser.id && (

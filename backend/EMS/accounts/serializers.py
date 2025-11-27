@@ -6,6 +6,7 @@ class InstitutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Institution
         fields = ["id", "name", "address"]
+        ref_name = "AccountsInstitution"
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

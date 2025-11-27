@@ -2,7 +2,7 @@ import { type FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useIsAuthModal from '../../../hooks/useIsAuth';
-import EventCard from '../../../components/EventCard';
+import EventCard from '../../../components/eventCard/EventCard';
 import Button from '../../../components/Button';
 import CreateEventModal from '../../events/modals/EventModal';
 import NotAuthModal from '../../auth/modals/NotAuthModal';

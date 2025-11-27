@@ -15,7 +15,6 @@ export interface AuthState {
 export interface SigninResponse {
     user: User;
     token: string;
-    refresh: string;
 }
 
 export interface RegisterPayload {

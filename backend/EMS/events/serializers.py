@@ -7,6 +7,7 @@ class InstitutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Institution
         fields = ["id", "name", "address"]
+        ref_name = "EventsInstitution"
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,3 +43,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ["id", "event", "event_id", "participant", "created_at"]
         read_only_fields = ["participant", "created_at"]
         ref_name = "EventsRegistrationSerializer"
+
+    def create(self, validated_data):
+        participant = self.context["participant"]
+        validated_data["participant"] = participant
+        return Registration.objects.create(**validated_data)
