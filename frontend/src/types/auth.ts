@@ -1,10 +1,4 @@
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    institutionName: string;
-    institutionAddress: string;
-}
+import type { User } from "./user";
 
 export interface AuthState {
     isAuthenticated: boolean;

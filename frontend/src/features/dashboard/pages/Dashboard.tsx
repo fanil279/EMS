@@ -2,7 +2,7 @@ import { type FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useIsAuthModal from '../../../hooks/useIsAuth';
-import EventCard from '../../../components/eventsSection/EventsSection';
+import EventsSection from '../../../components/eventsSection/EventsSection';
 import Button from '../../../components/Button';
 import CreateEventModal from '../../events/modals/EventModal';
 import NotAuthModal from '../../auth/modals/NotAuthModal';
@@ -79,10 +79,10 @@ const Dashboard: FC = () => {
             </section>
 
             <section>
-                <EventCard />
+                <EventsSection />
 
                 {latestEvents && latestEvents.length > 5 && (
-                    <div className='flex justify-center mt-12'>
+                    <div className='flex justify-center bg-blue-900/50 pb-12'>
                         <Button
                             variant='secondary'
                             className='mt-4 w-100'

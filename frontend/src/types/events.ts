@@ -36,3 +36,11 @@ export interface EventRegistration {
     participant: User;
     created_at: Date;
 }
+
+export type FilterState = {
+    filter: 'all' | 'mine';
+};
+
+export type PayloadAction = {
+    payload: FilterState['filter'];
+};

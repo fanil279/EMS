@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect } from 'react';
+import { type FC, useState, useEffect, useReducer, useMemo, } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setRegistered } from './eventCardSlice';
 import useIsAuthModal from '../../hooks/useIsAuth';
@@ -8,21 +8,44 @@ import NotAuthModal from '../../features/auth/modals/NotAuthModal';
 import eventsService from '../../services/eventsService';
 import { requireAuth } from '../../features/dashboard/pages/Dashboard';
 import type { RootState, AppDispatch } from '../../store';
-import type { Event } from '../../types';
+import type { Event, FilterState, PayloadAction, } from '../../types';
 
-const EventCard: FC = () => {
+const EventsSection: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-
+    
     const userId = useSelector((state: RootState) => state.auth.user?.id);
     const registrations = useSelector((state: RootState) => state.eventRegistration.registrations);
 
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-    const [events, setEvents] = useState<Event[] | null>(null);
     const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
     const [showEventModal, setShowEventModal] = useState<boolean>(false);
 
     const { showNotAuthModal, setShowNotAuthModal } = useIsAuthModal();
+    const [events, setEvents] = useState<Event[] | null>(null);
+
+    const filterReducer = (state: FilterState, action: PayloadAction): FilterState => {
+        return { ...state, filter: action.payload };
+    };
+
+    const [state, dispatchFilter] = useReducer(filterReducer, {
+        filter: 'all'
+    });
+
+    const filteredEvents = useMemo(() => {
+        if (!events) return [];
+
+        return state.filter === 'mine'
+            ? events.filter((event) => event.organiser.id === userId)
+            : events;
+    }, [events, state.filter, userId]);
+
+    const handleEventUpdated = (updatedEvent: Event) => {
+        setEvents((prev) => prev
+            ? prev.map((e) => e.id === updatedEvent.id ? updatedEvent : e)
+            : null
+        );
+    };
 
     useEffect(() => {
         const loadLatestEvents = async () => {
@@ -38,8 +61,18 @@ const EventCard: FC = () => {
     }, []);
 
     return (
-        <div className={events?.length! > 0 ? 'bg-blue-900/50 py-20' : 'bg-blue-900/50 py-55'}>
+        <div className={filteredEvents?.length! > 0 ? 'bg-blue-900/50 py-20' : 'bg-blue-900/50 py-55'}>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+                {isAuthenticated && (
+                    <select
+                        className='bg-slate-800 text-white mb-6 border border-white/20 py-2 px-5 rounded'
+                        value={state?.filter}
+                        onChange={(e) => dispatchFilter({ payload: e.target.value as 'all' | 'mine' })}
+                    >
+                        <option value='all'>All Events</option>
+                        <option value='mine'>My Events</option>
+                    </select>
+                )}
                 
                 <div className='mb-12'>
                     <h2 className='text-4xl font-bold text-white mb-2'>All Events</h2>
@@ -49,7 +82,7 @@ const EventCard: FC = () => {
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                    {events?.map((event) => {
+                    {filteredEvents?.map((event: Event) => {
                         return (
                             <div
                                 key={event.id}
@@ -144,17 +177,12 @@ const EventCard: FC = () => {
                 <EventModal
                     onClose={() => setShowEventModal(false)}
                     action={selectedEventId != null}
-                    onEventUpdated={(updatedEvent: Event) => {
-                        setEvents((prev) => prev
-                            ? prev.map((e) => e.id === updatedEvent.id ? updatedEvent : e)
-                            : [updatedEvent]
-                        );
-                    }}
-                    eventId={selectedEventId!}
+                    onEventUpdated={handleEventUpdated}
+                    eventId={selectedEventId ?? undefined}
                 />
             )}
         </div>
     );
 };
 
-export default EventCard;
+export default EventsSection;

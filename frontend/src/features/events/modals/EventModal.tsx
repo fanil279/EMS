@@ -13,97 +13,78 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
 
     const [error, setError] = useState<string | null>(null);
 
-    let handleEvent: Function;
+    const handleEvent = async () => {
+        if (action && eventId) {
+            try {
+                if (title && location && description && startDate && endDate && registrationDeadline) {
+                    const response = await eventsService.editEvent({
+                        title,
+                        description,
+                        location,
+                        start_date: startDate,
+                        end_date: endDate,
+                        registration_deadline: registrationDeadline,
+                    }, eventId);
 
-    if (action && eventId) {
-        if (
-            !title ||
-            !location ||
-            !description ||
-            !startDate ||
-            !endDate ||
-            !registrationDeadline
-        ) {
-            const payload: Partial<EventPayload> = {};
+                    if (response) {
+                        onEventUpdated?.(response);
+                        onClose();
+                    }
+                } else {
+                    const payload: Partial<EventPayload> = {};
 
-            if (title) payload.title = title;
-            if (description) payload.description = description;
-            if (location) payload.location = location;
-            if (startDate) payload.start_date = startDate;
-            if (endDate) payload.end_date = endDate;
-            if (registrationDeadline) payload.registration_deadline = registrationDeadline;
+                    if (title) payload.title = title;
+                    if (description) payload.description = description;
+                    if (location) payload.location = location;
+                    if (startDate) payload.start_date = startDate;
+                    if (endDate) payload.end_date = endDate;
+                    if (registrationDeadline) payload.registration_deadline = registrationDeadline;
 
-            handleEvent = async () => {
-                try {
                     const response = await eventsService.editEventPartial(payload, eventId);
 
                     if (response) {
                         onEventUpdated?.(response);
                         onClose();
-                    }                    
-                } catch (err) {
-                    throw err;
-                }
-            };
-        } else {
-            handleEvent = async () => {
-            try {
-                const response = await eventsService.editEvent({
-                    title: title,
-                    description: description,
-                    location: location,
-                    start_date: startDate,
-                    end_date: endDate,
-                    registration_deadline: registrationDeadline,
-                }, eventId);
-
-                if (response) {
-                    onClose();
-                    onEventUpdated?.(response);
+                    }
                 }
             } catch (err) {
-                throw err;
+                console.error(err);
             }
-            };
-        }
-    } else {
-        handleEvent = async () => {
-            if  (
-                    !title ||
-                    !location ||
-                    !description ||
-                    !startDate ||
-                    !endDate ||
-                    !registrationDeadline
-                )
-            {
-                alert('Fill in all the required fileds!');
-                
+        } else {
+            if (!title || !location || !description || !startDate || !endDate || !registrationDeadline) {
+                alert('Fill in all the required fields!');
                 return;
             }
-            
+
             try {
-                if ((startDate !> endDate) && (startDate || endDate) !< registrationDeadline) {
+                const start = new Date(startDate).getTime();
+                const end = new Date(endDate).getTime();
+                const regDeadline = new Date(registrationDeadline).getTime();
+                const now = Date.now();
+
+                if (start >= now && end >= now && start <= end && regDeadline < start && regDeadline < end) {
                     const response = await eventsService.createEvent({
-                        title: title,
-                        description: description,
-                        location: location,
+                        title,
+                        description,
+                        location,
                         start_date: startDate,
                         end_date: endDate,
                         registration_deadline: registrationDeadline,
                     });
 
-                    if (response) onClose();
-
-                    window.location.reload();
+                    if (response) {
+                        onEventUpdated?.(response);
+                        
+                        window.location.reload();
+                    }
                 } else {
-                    setError('Please set event start date, end date or registration deadline corretcly!');
+                    setError('Please set event start date, end date or registration deadline correctly!');
                 }
             } catch (err) {
-                throw err;
+                console.error(err);
             }
-        };
-    }
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

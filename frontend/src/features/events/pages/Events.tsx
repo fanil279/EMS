@@ -1,8 +1,8 @@
 import { type FC } from 'react';
-import EventCard from '../../../components/eventsSection/EventsSection';
+import EventsSection from '../../../components/eventsSection/EventsSection';
 
 const Events: FC = () => (
-    <EventCard />
+    <EventsSection />
 );
 
 export default Events;
