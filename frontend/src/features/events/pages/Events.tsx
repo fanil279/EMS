@@ -12,7 +12,7 @@ const Events: FC = () => {
             <div className='bg-blue-900/50'>
                 <Button
                     variant='secondary'
-                    className='float-right mt-20 mr-10'
+                    className='float-right mt-19.5 mr-10'
                     onClick={() => {
                         setShowCreateEventModal(true);
                     }}

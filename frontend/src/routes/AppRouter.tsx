@@ -16,7 +16,7 @@ const AppRoutes = () => {
                 </Route>
 
                 <Route
-                    path='/events'
+                    path='events/'
                     element={
                         <ProtectedRoute>
                             <MainLayout />

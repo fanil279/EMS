@@ -4,9 +4,10 @@ import { setRegistered } from './eventCardSlice';
 import useIsAuthModal from '../../hooks/useIsAuth';
 import Button from '../Button';
 import EventModal from '../../features/events/modals/EventModal';
+import EventDetailsModal from '../../features/events/modals/EventDetailsModal';
 import NotAuthModal from '../../features/auth/modals/NotAuthModal';
 import eventsService from '../../services/eventsService';
-import { requireAuth } from '../../features/dashboard/pages/Dashboard';
+import { requireAuth } from '../../utils/requireAuth';
 import type { RootState, AppDispatch } from '../../store';
 import type { Event, FilterState, PayloadAction, } from '../../types';
 
@@ -20,6 +21,7 @@ const EventsSection: FC = () => {
 
     const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
     const [showEventModal, setShowEventModal] = useState<boolean>(false);
+    const [showEventDetailsModal, setShowEventDetailsModal] = useState<boolean>(false);
 
     const { showNotAuthModal, setShowNotAuthModal } = useIsAuthModal();
     const [events, setEvents] = useState<Event[] | null>(null);
@@ -99,6 +101,26 @@ const EventsSection: FC = () => {
                                     text-white
                                 '
                             >
+                                {userId === event.organiser.id && (
+                                    <Button
+                                        variant='tertiary'
+                                        onClick={() => {
+                                            requireAuth(
+                                                isAuthenticated,
+
+                                                () => {
+                                                    setSelectedEventId(event.id);
+                                                    setShowEventDetailsModal(true);
+                                                },
+
+                                                () => setShowNotAuthModal(true)
+                                            );
+                                        }}
+                                    >
+                                        View details
+                                    </Button>
+                                )}
+
                                 <h3 className='text-xl font-semibold mt-12'>{event.title}</h3>
 
                                 <p className='text-gray-200 text-sm line-clamp-3'>{event.description}</p>
@@ -118,19 +140,25 @@ const EventsSection: FC = () => {
                                 </div>
 
                                 <Button
-                                    variant={registrations[event.id] && isAuthenticated ? 'success' : 'primary'}
-                                    className={registrations[event.id] && isAuthenticated ? 'pointer-events-none' : 'mt-4 w-full'}
+                                    variant={registrations[event.id].participant.id === userId && isAuthenticated ? 'success' : 'primary'}
+                                    className={registrations[event.id].participant.id === userId && isAuthenticated ? 'pointer-events-none' : 'mt-4 w-full'}
                                     onClick={() => {
-                                        requireAuth(async () => {
-                                            const eventRegistered = await eventsService.registerEvent({ event_id: event.id });
-                                            
-                                            if (eventRegistered) {
-                                                dispatch(setRegistered(eventRegistered));
-                                            }
-                                        }, isAuthenticated);
+                                        requireAuth(
+                                            isAuthenticated,
+
+                                            async () => {
+                                                const eventRegistered = await eventsService.registerEvent({ event_id: event.id });
+
+                                                if (eventRegistered) {
+                                                    dispatch(setRegistered(eventRegistered));
+                                                }
+                                            },
+
+                                            () => setShowNotAuthModal(true)
+                                        );
                                     }}
                                 >
-                                    {registrations[event.id] && isAuthenticated ? (
+                                    {registrations[event.id].participant.id === userId && isAuthenticated ? (
                                         <span>Registered</span>
                                     ) : (
                                         <span>Register for event</span>
@@ -142,10 +170,14 @@ const EventsSection: FC = () => {
                                         <Button
                                             variant='tertiary'
                                             onClick={() => {
-                                                requireAuth(() => {
-                                                    setSelectedEventId(event.id);
-                                                    setShowEventModal(true);
-                                                }, isAuthenticated);
+                                                requireAuth(
+                                                    isAuthenticated,
+                                                    () => {
+                                                        setSelectedEventId(event.id);
+                                                        setShowEventModal(true);
+                                                    },
+                                                    () => setShowNotAuthModal(true)
+                                                );
                                             }}
                                         >
                                             Edit event
@@ -154,11 +186,15 @@ const EventsSection: FC = () => {
                                         <Button
                                             variant='tertiary'
                                             onClick={() => {
-                                                requireAuth(async () => {
-                                                    await eventsService.deleteEvent(event.id);
-            
-                                                    setEvents(prev => prev ? prev.filter(e => e.id !== event.id) : null);
-                                                }, isAuthenticated)
+                                                requireAuth(
+                                                    isAuthenticated,
+                                                    async () => {
+                                                        await eventsService.deleteEvent(event.id);
+
+                                                        setEvents(prev => prev ? prev.filter(e => e.id !== event.id) : null);
+                                                    },
+                                                    () => setShowNotAuthModal(true)
+                                                );
                                             }}
                                         >
                                             Delete event
@@ -178,6 +214,13 @@ const EventsSection: FC = () => {
                     onClose={() => setShowEventModal(false)}
                     action={selectedEventId != null}
                     onEventUpdated={handleEventUpdated}
+                    eventId={selectedEventId ?? undefined}
+                />
+            )}
+
+            {showEventDetailsModal && (
+                <EventDetailsModal
+                    onClose={() => setShowEventDetailsModal(false)}
                     eventId={selectedEventId ?? undefined}
                 />
             )}

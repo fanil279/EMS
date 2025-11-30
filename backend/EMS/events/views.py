@@ -114,14 +114,20 @@ class RegistrationListCreateAPIView(generics.ListCreateAPIView):
                     f"{self.request.user.name} registered for your event: {registration.event.title}")
 
 
-class RegistrationRetrieveAPIView(generics.RetrieveAPIView):
-    queryset = Registration.objects.all()
+class EventRegistrationsAPIView(generics.ListAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Retrieve a registration (authenticated)",
+        operation_description="List all registrations for a specific event (authenticated)",
         security=[{"Bearer": []}],
+        responses={200: RegistrationSerializer(many=True)}
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        event_id = self.kwargs.get("event_id")
+        return Registration.objects.filter(
+            event__id=event_id
+        ).select_related("participant", "participant__institution", "event")

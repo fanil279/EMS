@@ -8,10 +8,9 @@ import Button from '../../../components/Button';
 import CreateEventModal from '../../events/modals/EventModal';
 import NotAuthModal from '../../auth/modals/NotAuthModal';
 import eventsService from '../../../services/eventsService';
+import { requireAuth } from '../../../utils/requireAuth';
 import type { RootState} from '../../../store';
 import type { Event } from '../../../types';
-
-export let requireAuth: Function;
 
 const Dashboard: FC = () => {
     const navigate = useNavigate();
@@ -21,14 +20,6 @@ const Dashboard: FC = () => {
 
     const [latestEvents, setLatestEvents] = useState<Event[] | null>(null);
     const { showCreateEventModal, setShowCreateEventModal } = useCreateEvent();
-
-    requireAuth = (action: () => void, isAuthenticated: boolean) => {
-        if (isAuthenticated) {
-            action();
-        } else {
-            setShowNotAuthModal(true);
-        }
-    }
 
     useEffect(() => {
         const loadLatestEvents = async () => {
@@ -58,18 +49,34 @@ const Dashboard: FC = () => {
                 <div className='flex flex-col md:flex-row gap-4'>
                     <Button
                         variant='primary'
-                        onClick={() => requireAuth(() => {
-                            navigate('/events');
-                        }, isAuthenticated)}
+                        onClick={() =>
+                            requireAuth(
+                                isAuthenticated,
+
+                                () => {
+                                    navigate('/events', { replace: true });
+                                },
+
+                                () => setShowNotAuthModal(true)
+                            )
+                        }
                     >
                         Events
                     </Button>
 
                     <Button
                         variant='primary'
-                        onClick={() => requireAuth(() => {
-                            setShowCreateEventModal(true);
-                        }, isAuthenticated)}
+                        onClick={() =>
+                            requireAuth(
+                                isAuthenticated,
+
+                                () => {
+                                    setShowCreateEventModal(true);
+                                },
+                                
+                                () => setShowNotAuthModal(true)
+                            )
+                        }
                     >  
                         Create Event
                     </Button>
@@ -87,9 +94,17 @@ const Dashboard: FC = () => {
                         <Button
                             variant='secondary'
                             className='mt-4 w-100'
-                            onClick={() => requireAuth(() => {
-                                navigate('/events');
-                            }, isAuthenticated)}
+                            onClick={() =>
+                                requireAuth(
+                                    isAuthenticated,
+
+                                    () => {
+                                        navigate('/events', { replace: true });
+                                    },
+
+                                    () => setShowNotAuthModal(true)
+                                )
+                            }
                         >
                             More events
                         </Button>

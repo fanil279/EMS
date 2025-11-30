@@ -1,6 +1,6 @@
 import { type FC, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import Button from '../components/Button';
 import RegisterModal from '../features/auth/modals/RegisterModal';
@@ -10,9 +10,10 @@ import authService from '../services/authService';
 import type { RootState, AppDispatch } from '../store';
 
 const MainLayout: FC = () => {
-    const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
+    const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showSigninModal, setShowSigninModal] = useState(false);
@@ -71,21 +72,13 @@ const MainLayout: FC = () => {
                                     Welcome, {user?.name}!
                                 </span>
 
-                                <div className='text-xs sm:text-sm sm:px-4 sm:py-2'>
-                                    <Button
-                                        variant='secondary'
-                                        className='mr-3'
-                                    >
-                                        View Attendees
-                                    </Button>
 
-                                    <Button
-                                        variant='secondary'
-                                        onClick={handleLogout}
-                                    >
-                                        Logout
-                                    </Button>
-                                </div>
+                                <Button
+                                    variant='secondary'
+                                    onClick={handleLogout}
+                                >
+                                    Logout
+                                </Button>
                             </div>
                         )}
                     </nav>

@@ -32,7 +32,6 @@ export interface EventRegistrationPayload {
 export interface EventRegistration {
     id: number;
     event: Event;
-    event_id: number;
     participant: User;
     created_at: Date;
 }
