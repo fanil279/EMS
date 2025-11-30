@@ -52,13 +52,13 @@ const EventDetailsModal: FC<ModalProps> = ({ onClose, eventId }) => {
                                 <p className="font-medium text-gray-800">
                                     Institution:{' '}
                                     <span className="font-normal">
-                                        {registration.participant.institution?.institutionName}
+                                        {registration.participant.institution?.name}
                                     </span>
                                 </p>
                                 <p className="font-medium text-gray-800">
                                     Address:{' '}
                                     <span className="font-normal">
-                                        {registration.participant.institution?.institutionAddress}
+                                        {registration.participant.institution?.address}
                                     </span>
                                 </p>
                             </div>

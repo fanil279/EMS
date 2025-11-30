@@ -13,7 +13,11 @@ export interface Event {
 }
 
 export interface EventRegistrationState {
-    registrations: { [eventId: number]: EventRegistration };
+    registrations: {
+        [userId: number]: {
+            [eventId: number]: EventRegistration
+        }
+    };
 }
 
 export interface EventPayload {

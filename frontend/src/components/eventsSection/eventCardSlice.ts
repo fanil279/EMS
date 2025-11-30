@@ -10,8 +10,17 @@ const eventRegistrationSlice = createSlice({
     initialState,
 
     reducers: {
-        setRegistered: (state, action: PayloadAction<EventRegistration>) => {
-            state.registrations[action.payload.event.id] = action.payload;
+        setRegistered: (state, action: PayloadAction<{ userId: number; registration: EventRegistration }>) => {
+            const { userId, registration } = action.payload;
+            const eventId = registration.event?.id;
+
+            if (!userId || typeof eventId !== 'number') return;
+
+            if (!state.registrations[userId]) {
+                state.registrations[userId] = {};
+            }
+
+            state.registrations[userId][eventId] = registration;
         },
     }
 });
