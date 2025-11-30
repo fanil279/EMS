@@ -2,6 +2,7 @@ import { type FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useIsAuthModal from '../../../hooks/useIsAuth';
+import useCreateEvent from '../../../hooks/useCreateEvent';
 import EventsSection from '../../../components/eventsSection/EventsSection';
 import Button from '../../../components/Button';
 import CreateEventModal from '../../events/modals/EventModal';
@@ -19,7 +20,7 @@ const Dashboard: FC = () => {
     const { showNotAuthModal, setShowNotAuthModal } = useIsAuthModal();
 
     const [latestEvents, setLatestEvents] = useState<Event[] | null>(null);
-    const [showCreateEventModal, setShowCreateEventModal] = useState(false);
+    const { showCreateEventModal, setShowCreateEventModal } = useCreateEvent();
 
     requireAuth = (action: () => void, isAuthenticated: boolean) => {
         if (isAuthenticated) {

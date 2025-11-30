@@ -6,4 +6,4 @@ function useIsAuthModal() {
     return { showNotAuthModal, setShowNotAuthModal };
 }
 
-export default useIsAuthModal
+export default useIsAuthModal;
