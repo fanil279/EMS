@@ -118,8 +118,8 @@ const EventsSection: FC = () => {
                                 </div>
 
                                 <Button
-                                    variant={registrations[event.id] ? 'success' : 'primary'}
-                                    className={registrations[event.id] ? 'pointer-events-none' : 'mt-4 w-full'}
+                                    variant={registrations[event.id] && isAuthenticated ? 'success' : 'primary'}
+                                    className={registrations[event.id] && isAuthenticated ? 'pointer-events-none' : 'mt-4 w-full'}
                                     onClick={() => {
                                         requireAuth(async () => {
                                             const eventRegistered = await eventsService.registerEvent({ event_id: event.id });
@@ -130,7 +130,7 @@ const EventsSection: FC = () => {
                                         }, isAuthenticated);
                                     }}
                                 >
-                                    {registrations[event.id] ? (
+                                    {registrations[event.id] && isAuthenticated ? (
                                         <span>Registered</span>
                                     ) : (
                                         <span>Register for event</span>

@@ -34,27 +34,35 @@ const MainLayout: FC = () => {
             <header className='sticky top-0 z-50 w-full bg-slate-950/95 backdrop-blur border-b border-gray-300'>
                 <div className='max-w-7xl mx-auto px-3 sm:px-6 lg:px-8'>
                     <nav className='flex items-center justify-between h-14 sm:h-16'>
-                        <a href='/' className='flex items-center gap-1.5 sm:gap-2'>
+                        <a
+                            href='/'
+                            className='flex items-center gap-1.5 sm:gap-2'
+                        >
                             <Calendar className='w-5 h-5 sm:w-6 sm:h-6 text-white' />
+                            
                             <span className='text-base sm:text-xl font-bold text-white'>EventHub</span>
                         </a>
+
                         {!isAuthenticated ? (
                             <div className='flex items-center gap-2 sm:gap-4'>
                                 <Button
                                     variant='secondary'
-                                    className='text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2'
+                                    className='text-xs sm:text-sm sm:px-4 sm:py-2'
                                     onClick={() => setShowRegisterModal(true)}
                                 >
                                     Register
                                 </Button>
+
                                 {showRegisterModal && <RegisterModal onClose={() => setShowRegisterModal(false)} />}
+
                                 <Button
                                     variant='secondary'
-                                    className='text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2'
+                                    className='text-xs sm:text-sm sm:px-4 sm:py-2'
                                     onClick={() => setShowSigninModal(true)}
                                 >
                                     Sign In
                                 </Button>
+
                                 {showSigninModal && <SigninModal onClose={() => setShowSigninModal(false)} />}
                             </div>
                         ) : (
@@ -62,13 +70,22 @@ const MainLayout: FC = () => {
                                 <span className='text-white text-xs sm:text-sm md:text-base truncate max-w-[100px] sm:max-w-none'>
                                     Welcome, {user?.name}!
                                 </span>
-                                <Button
-                                    variant='secondary'
-                                    className='text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2'
-                                    onClick={handleLogout}
-                                >
-                                    Logout
-                                </Button>
+
+                                <div className='text-xs sm:text-sm sm:px-4 sm:py-2'>
+                                    <Button
+                                        variant='secondary'
+                                        className='mr-3'
+                                    >
+                                        View Attendees
+                                    </Button>
+
+                                    <Button
+                                        variant='secondary'
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </Button>
+                                </div>
                             </div>
                         )}
                     </nav>
