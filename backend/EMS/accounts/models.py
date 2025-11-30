@@ -25,6 +25,7 @@ class AppUserManager(BaseUserManager):
         extra_fields.setdefault("role", AppUser.Role.ADMIN)
         return self.create_user(email, password, **extra_fields)
 
+
 class AppUser(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
         ADMIN = "admin", "Admin"

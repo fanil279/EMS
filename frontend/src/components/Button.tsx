@@ -2,17 +2,22 @@ const Button = ({
     children,
     onClick,
     className = '',
-    variant = 'primary' ,
+    variant = 'primary',
+    close,
     ...props
 }: {
     children: React.ReactNode;
     onClick?: () => void;
     className?: string;
     variant?: 'primary' | 'secondary' | 'tertiary' | 'success';
+    close: boolean;
     [key: string]: unknown;
 }) => {
         const baseClasses =
             'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 cursor-pointer disabled:pointer-events-none disabled:opacity-50';
+
+        const baseClasses2 =
+            'absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold cursor-pointer';
 
         const variants = {
             primary: 'bg-pink-500 text-white hover:bg-pink-600 px-4 py-2',
@@ -22,7 +27,7 @@ const Button = ({
         };
 
     return (
-        <button className={`${baseClasses}, ${variants[variant]} ${className}`}
+        <button className={`${close ? baseClasses2 : baseClasses}, ${close ? '' : variants[variant]} ${className}`}
             onClick={onClick}
             {...props}
         >

@@ -1,5 +1,11 @@
 import axiosInstance from '../config/axios';
-import type { Event, EventPayload, EventRegistration, EventRegistrationPayload } from '../types';
+import type {
+    Event,
+    EventPayload,
+    EventRegistration,
+    EventRegistrationPayload,
+    ViewEventRegistration,
+} from '../types';
 
 class EventService {
     readonly backendUrl: string;
@@ -85,6 +91,18 @@ class EventService {
             return response.data;
         } catch (err) {
             console.error('Error registering for the event:', err);
+            
+            throw err;
+        }
+    }
+
+    async viewEventRegistrations(id: number): Promise<ViewEventRegistration> {
+        try {
+            const response = await axiosInstance.get(`events/${id}/registrations/`);
+
+            return response.data;
+        } catch (err) {
+            console.error('Error viewing event details:', err);
             
             throw err;
         }

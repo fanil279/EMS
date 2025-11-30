@@ -1,6 +1,6 @@
 import { type FC, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import Button from '../components/Button';
 import RegisterModal from '../features/auth/modals/RegisterModal';
@@ -11,7 +11,6 @@ import type { RootState, AppDispatch } from '../store';
 
 const MainLayout: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
 
     const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
@@ -50,6 +49,7 @@ const MainLayout: FC = () => {
                                     variant='secondary'
                                     className='text-xs sm:text-sm sm:px-4 sm:py-2'
                                     onClick={() => setShowRegisterModal(true)}
+                                    close={false}
                                 >
                                     Register
                                 </Button>
@@ -60,6 +60,7 @@ const MainLayout: FC = () => {
                                     variant='secondary'
                                     className='text-xs sm:text-sm sm:px-4 sm:py-2'
                                     onClick={() => setShowSigninModal(true)}
+                                    close={false}
                                 >
                                     Sign In
                                 </Button>
@@ -76,6 +77,7 @@ const MainLayout: FC = () => {
                                 <Button
                                     variant='secondary'
                                     onClick={handleLogout}
+                                    close={false}
                                 >
                                     Logout
                                 </Button>

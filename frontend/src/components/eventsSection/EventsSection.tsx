@@ -104,6 +104,7 @@ const EventsSection: FC = () => {
                                 {userId === event.organiser.id && (
                                     <Button
                                         variant='tertiary'
+                                        close={false}
                                         onClick={() => {
                                             requireAuth(
                                                 isAuthenticated,
@@ -142,6 +143,7 @@ const EventsSection: FC = () => {
                                 <Button
                                     variant={registrations[event.id].participant.id === userId && isAuthenticated ? 'success' : 'primary'}
                                     className={registrations[event.id].participant.id === userId && isAuthenticated ? 'pointer-events-none' : 'mt-4 w-full'}
+                                    close={false}
                                     onClick={() => {
                                         requireAuth(
                                             isAuthenticated,
@@ -169,6 +171,7 @@ const EventsSection: FC = () => {
                                     <div className='flex gap-3'>
                                         <Button
                                             variant='tertiary'
+                                            close={false}
                                             onClick={() => {
                                                 requireAuth(
                                                     isAuthenticated,
@@ -185,6 +188,7 @@ const EventsSection: FC = () => {
 
                                         <Button
                                             variant='tertiary'
+                                            close={false}
                                             onClick={() => {
                                                 requireAuth(
                                                     isAuthenticated,

@@ -13,6 +13,7 @@ const Events: FC = () => {
                 <Button
                     variant='secondary'
                     className='float-right mt-19.5 mr-10'
+                    close={false}
                     onClick={() => {
                         setShowCreateEventModal(true);
                     }}

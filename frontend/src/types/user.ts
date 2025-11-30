@@ -6,4 +6,6 @@ export interface User {
     email: string;
     role: 'admin' | 'user';
     institution: Institution | null;
+    isActive: boolean;
+    isStaff: boolean;
 }

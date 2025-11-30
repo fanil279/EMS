@@ -136,6 +136,7 @@ const RegisterModal: FC<ModalProps> = ({ onClose }) => {
 						type='submit'
 						variant='primary'
 						className='w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition'
+						close={false}
 					>
 						Register
 					</Button>

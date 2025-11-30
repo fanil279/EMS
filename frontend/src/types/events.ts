@@ -43,3 +43,9 @@ export type FilterState = {
 export type PayloadAction = {
     payload: FilterState['filter'];
 };
+
+export interface ViewEventRegistration {
+    id: number;
+    event: Event;
+    participant: User;
+}

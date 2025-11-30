@@ -49,6 +49,7 @@ const Dashboard: FC = () => {
                 <div className='flex flex-col md:flex-row gap-4'>
                     <Button
                         variant='primary'
+                        close={false}
                         onClick={() =>
                             requireAuth(
                                 isAuthenticated,
@@ -66,6 +67,7 @@ const Dashboard: FC = () => {
 
                     <Button
                         variant='primary'
+                        close={false}
                         onClick={() =>
                             requireAuth(
                                 isAuthenticated,
@@ -94,6 +96,7 @@ const Dashboard: FC = () => {
                         <Button
                             variant='secondary'
                             className='mt-4 w-100'
+                            close={false}
                             onClick={() =>
                                 requireAuth(
                                     isAuthenticated,

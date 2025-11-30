@@ -20,6 +20,7 @@ const NotAuthModal: FC<NotAuthModalProps> = ({ onClose }) => (
                 <Button
                     variant='primary'
                     className='w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white pointer-events-none font-semibold rounded-lg shadow-lg transition'
+                    close={false}
                 >
                     Register or Sign In please!
                 </Button>

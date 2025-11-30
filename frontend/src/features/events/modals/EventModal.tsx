@@ -88,13 +88,13 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'>
-            <div className='relative w-full max-w-lg bg-white rounded-2xl p-8 shadow-xl transform animate-fadeIn'>
-                <button
+            <div className='relative w-full max-w-lg bg-white rounded-2xl p-8 shadow-xl'>
+                <Button
                     onClick={onClose}
-                    className='absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold cursor-pointer'
+                    close={true}
                 >
                     &times;
-                </button>
+                </Button>
 
                 {action ? (
                     <h2 className='text-3xl font-semibold mb-6 text-center text-gray-800'>
@@ -191,6 +191,7 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                         variant='primary'
                         className='w-full mt-8'
                         onClick={() => handleEvent()}
+                        close={false}
                     >
                         Edit Event
                     </Button>
@@ -199,6 +200,7 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                         variant='primary'
                         className='w-full mt-8'
                         onClick={() => handleEvent()}
+                        close={false}
                     >
                         Create Event
                     </Button>
