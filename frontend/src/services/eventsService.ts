@@ -96,7 +96,7 @@ class EventService {
         }
     }
 
-    async viewEventRegistrations(id: number): Promise<ViewEventRegistration> {
+    async viewEventRegistrations(id: number): Promise<ViewEventRegistration[] | null> {
         try {
             const response = await axiosInstance.get(`events/${id}/registrations/`);
 

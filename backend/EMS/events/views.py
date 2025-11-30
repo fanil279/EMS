@@ -130,4 +130,4 @@ class EventRegistrationsAPIView(generics.ListAPIView):
         event_id = self.kwargs.get("event_id")
         return Registration.objects.filter(
             event__id=event_id
-        ).select_related("participant", "participant__institution", "event")
+        ).select_related("participant", "participant__institution")

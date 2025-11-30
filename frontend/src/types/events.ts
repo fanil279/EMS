@@ -46,6 +46,5 @@ export type PayloadAction = {
 
 export interface ViewEventRegistration {
     id: number;
-    event: Event;
     participant: User;
 }

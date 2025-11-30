@@ -4,16 +4,20 @@ import eventsService from '../../../services/eventsService';
 import type { ModalProps, ViewEventRegistration } from '../../../types';
 
 const EventDetailsModal: FC<ModalProps> = ({ onClose, eventId }) => {
-    const [_eventDetails, setEventDetails] = useState<ViewEventRegistration | null>(null);
+    const [eventDetails, setEventDetails] = useState<ViewEventRegistration[] | null>(null);
 
     useEffect(() => {
         const fetchEventDetails = async () => {
-            if (!eventId) return;
+            try {
+                if (!eventId) return;
 
-            const data = await eventsService.viewEventRegistrations(eventId);
+                const data = await eventsService.viewEventRegistrations(eventId);
 
-            if (data) {
-                setEventDetails(data);
+                if (data) {
+                    setEventDetails(data);
+                }
+            } catch (err) {
+                console.error('Error fetching event details', err);
             }
         };
 
@@ -21,90 +25,48 @@ const EventDetailsModal: FC<ModalProps> = ({ onClose, eventId }) => {
     }, [eventId]);
 
     return (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'>
-            <div className='relative w-full max-w-2xl bg-white rounded-2xl p-8 shadow-xl'>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="relative w-full max-w-3xl bg-white rounded-2xl p-8 shadow-xl overflow-y-auto max-h-[90vh]">
                 <Button
-                    onClick={onClose}
-                    close={true}
-                >
+                    onClick={onClose} close={true}>
                     &times;
                 </Button>
 
-                <h1 className='text-3xl font-semibold mb-6 text-center text-gray-800'>Event Details</h1>
+                <h1 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+                    Event Participants
+                </h1>
 
-                <div className='space-y-5'>
-                    <div>
-                        <label className='block mb-1 mr-100 font-medium text-gray-700'>Title</label>
-                        
-                        <input
-                            type='text'
-                            placeholder='Event title'
-                            //value={}
-                            //onChange={}
-                            className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        />
+                {eventDetails && eventDetails.length > 0 ? (
+                    <div className="space-y-4">
+                        {eventDetails.map((registration) => (
+                            <div
+                                key={registration.id}
+                                className="border rounded-xl p-4 bg-gray-50 hover:bg-gray-100 transition"
+                            >
+                                <p className="font-medium text-gray-800">
+                                    Name: <span className="font-normal">{registration.participant.name}</span>
+                                </p>
+                                <p className="font-medium text-gray-800">
+                                    Email: <span className="font-normal">{registration.participant.email}</span>
+                                </p>
+                                <p className="font-medium text-gray-800">
+                                    Institution:{' '}
+                                    <span className="font-normal">
+                                        {registration.participant.institution?.institutionName}
+                                    </span>
+                                </p>
+                                <p className="font-medium text-gray-800">
+                                    Address:{' '}
+                                    <span className="font-normal">
+                                        {registration.participant.institution?.institutionAddress}
+                                    </span>
+                                </p>
+                            </div>
+                        ))}
                     </div>
-
-                    <div>
-                        <label className='block mb-1 mr-100 font-medium text-gray-700'>Description</label>
-
-                        <textarea
-                            placeholder='Write about your event...'
-                            //value={}
-                            //onChange={}
-                            className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 h-28 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        />
-                    </div>
-
-                    <div>
-                        <label className='block mb-1 mr-100 font-medium text-gray-700'>Location</label>
-
-                        <input
-                            type='text'
-                            placeholder='Event location'
-                            //value={}
-                            //onChange={}
-                            className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        />
-                    </div>
-
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
-                            <label className='block mb-1 font-medium text-gray-700'>Start Date</label>
-
-                            <input
-                                type='date'
-                                //value={}
-                                //onChange={}
-                                className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                            />
-                        </div>
-
-                        <div>
-                            <label className='block mb-1 font-medium text-gray-700'>End Date</label>
-
-                            <input
-                                type='date'
-                                //value={}
-                                //onChange={}
-                                className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className='block mb-1 font-medium text-gray-700'>
-                            Registration Deadline
-                        </label>
-
-                        <input
-                            type='date'
-                            //value={}
-                            //onChange={}
-                            className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        />
-                    </div>
-                </div>
+                ) : (
+                    <p className="text-center text-gray-500 mt-10">No participants registered yet.</p>
+                )}
             </div>
         </div>
     );

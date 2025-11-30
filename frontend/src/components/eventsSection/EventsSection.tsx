@@ -53,6 +53,7 @@ const EventsSection: FC = () => {
         const loadLatestEvents = async () => {
             try {
                 const data = await eventsService.getEvents();
+                
                 if (data) setEvents(data as Event[]);
             } catch (err) {
                 console.error('Error fetching latest events:', err);
@@ -141,8 +142,8 @@ const EventsSection: FC = () => {
                                 </div>
 
                                 <Button
-                                    variant={registrations[event.id].participant.id === userId && isAuthenticated ? 'success' : 'primary'}
-                                    className={registrations[event.id].participant.id === userId && isAuthenticated ? 'pointer-events-none' : 'mt-4 w-full'}
+                                    variant={registrations[event.id]?.participant?.id === userId && isAuthenticated ? 'success' : 'primary'}
+                                    className={registrations[event.id]?.participant?.id === userId && isAuthenticated ? 'pointer-events-none' : 'mt-4 w-full'}
                                     close={false}
                                     onClick={() => {
                                         requireAuth(
@@ -160,7 +161,7 @@ const EventsSection: FC = () => {
                                         );
                                     }}
                                 >
-                                    {registrations[event.id].participant.id === userId && isAuthenticated ? (
+                                    {registrations[event.id]?.participant?.id === userId && isAuthenticated ? (
                                         <span>Registered</span>
                                     ) : (
                                         <span>Register for event</span>
@@ -205,8 +206,6 @@ const EventsSection: FC = () => {
                                         </Button>
                                     </div>
                                 )}
-
-                                {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
                             </div>
                         );
                     })}
@@ -228,6 +227,8 @@ const EventsSection: FC = () => {
                     eventId={selectedEventId ?? undefined}
                 />
             )}
+
+            {showNotAuthModal && <NotAuthModal onClose={() => setShowNotAuthModal(false)} />}
         </div>
     );
 };
