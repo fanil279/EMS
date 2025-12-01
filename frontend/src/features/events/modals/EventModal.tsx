@@ -62,7 +62,14 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                 const regDeadline = new Date(registrationDeadline).getTime();
                 const now = Date.now();
 
-                if (start >= now && end >= now && start <= end && regDeadline < start && regDeadline < end) {
+                if (
+                    start >= now &&
+                    end >= now &&
+                    start <= end &&
+                    regDeadline < start &&
+                    regDeadline < end &&
+                    regDeadline > now
+                ) {
                     const response = await eventsService.createEvent({
                         title,
                         description,
@@ -78,7 +85,9 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                         window.location.reload();
                     }
                 } else {
-                    setError('Please set event start date, end date or registration deadline correctly!');
+                    setError(
+                        'Please set event start date or end date or registration deadline correctly! Note that, registration deadline is set to 5am local time. (Ex: if deadline 12/01/2025, it means 12/01/2025 5am in the morning). Kindly take that into account.'
+                    );
                 }
             } catch (err) {
                 console.error(err);
@@ -152,8 +161,6 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                                 onChange={(e) => setStartDate(e.target.value)}
                                 className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
                             />
-
-                            {error && <span>{error}</span>}
                         </div>
 
                         <div>
@@ -165,8 +172,6 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                                 onChange={(e) => setEndDate(e.target.value)}
                                 className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
                             />
-
-                            {error && <span>{error}</span>}
                         </div>
                     </div>
 
@@ -181,9 +186,9 @@ const CreateEventModal: FC<ModalProps> = ({ onClose, action, onEventUpdated, eve
                             onChange={(e) => setRegistrationDeadline(e.target.value)}
                             className='w-full px-4 py-2 border border-gray-300 text-black rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         />
-
-                        {error && <span className='text-red-500'>{error}</span>}
                     </div>
+
+                    {error && <span className='text-red-500'>{error}</span>}
                 </div>
 
                 {action ? (
