@@ -8,12 +8,6 @@ import type {
 } from '../types';
 
 class EventService {
-    readonly backendUrl: string;
-
-    constructor() {
-        this.backendUrl = import.meta.env.VITE_BACKEND_URL;
-    }
-
     async getLatestEvents(): Promise<Event[] | null> {
         try {
             const response = await axiosInstance.get('events/events/latest/');

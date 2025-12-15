@@ -6,12 +6,6 @@ import type {
 } from '../types';
 
 class AuthService {
-    readonly backendUrl: string;
-
-    constructor() {
-        this.backendUrl = import.meta.env.VITE_BACKEND_URL;
-    }
-
     async register(payload: RegisterPayload): Promise<SigninResponse | null> {
         try {
             const response = await axiosInstance.post('accounts/register/', payload);
