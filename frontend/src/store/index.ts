@@ -4,13 +4,14 @@ import {
     persistReducer,
     FLUSH,
     REHYDRATE,
-    PAUSE, PERSIST,
+    PAUSE,
+    PERSIST,
     PURGE,
     REGISTER
 } from 'redux-persist';
-import authReducer from '../features/auth/authSlice'
-import eventRegistrationReducer from '../components/eventsSection/eventCardSlice';
 import storage from 'redux-persist/lib/storage';
+import authReducer from '../features/auth/authSlice';
+import eventRegistrationReducer from '../components/eventsSection/eventCardSlice';
 
 const persistConfigAuth = {
     key: 'auth',
@@ -24,8 +25,12 @@ const persistConfigEventReg = {
     whitelist: ['registrations'],
 };
 
-const persistedAuthReducer = persistReducer(persistConfigAuth, authReducer);
-const persistedEventRegistrationReducer = persistReducer(persistConfigEventReg, eventRegistrationReducer);
+const persistedAuthReducer = persistReducer(
+    persistConfigAuth, authReducer
+);
+const persistedEventRegistrationReducer = persistReducer(
+    persistConfigEventReg, eventRegistrationReducer
+);
 
 export const store = configureStore({
     reducer: {

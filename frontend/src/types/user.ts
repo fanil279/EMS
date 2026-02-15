@@ -8,4 +8,4 @@ export interface User {
     institution: Institution | null;
     isActive: boolean;
     isStaff: boolean;
-}
+};

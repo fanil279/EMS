@@ -10,7 +10,7 @@ export interface Event {
     registration_deadline: string;
     organiser: User;
     created_at: string;
-}
+};
 
 export interface EventRegistrationState {
     registrations: {
@@ -18,7 +18,7 @@ export interface EventRegistrationState {
             [eventId: number]: EventRegistration
         }
     };
-}
+};
 
 export interface EventPayload {
     title: string;
@@ -27,18 +27,18 @@ export interface EventPayload {
     start_date: string;
     end_date: string;
     registration_deadline: string;
-}
+};
 
 export interface EventRegistrationPayload {
     event_id: number;
-}
+};
 
 export interface EventRegistration {
     id: number;
     event: Event;
     participant: User;
     created_at: Date;
-}
+};
 
 export type FilterState = {
     filter: 'all' | 'mine';
@@ -51,4 +51,4 @@ export type PayloadAction = {
 export interface ViewEventRegistration {
     id: number;
     participant: User;
-}
+};

@@ -85,7 +85,7 @@ const EventsSection: FC = () => {
                 <div className='mb-12'>
                     <h2 className='text-4xl font-bold text-white mb-2'>All Events</h2>
                     
-                    <p className='text-blue-100 text-lg text-white'>
+                    <p className='text-lg text-white'>
                         Familiarise with all events managed in EventHub
                     </p>
                 </div>
